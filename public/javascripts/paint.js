@@ -49,7 +49,15 @@ document.addEventListener('DOMContentLoaded', function(){
 
   var clear = document.getElementById('clear');
   clear.addEventListener('click', function() {
-    context.clearRect(0, 0, canvas.width, canvas.height)
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    var points = {
+        s: 'clear'
+      , x: 0
+      , y: 0
+      , c: context.strokeStyle
+      , id: canvas.id
+    }
+    paint.json.emit('paint points', points)    
   }, false);
 
   var colors = document.getElementById('colors').childNodes;
@@ -113,6 +121,8 @@ document.addEventListener('DOMContentLoaded', function(){
         context.beginPath();
         context.moveTo(points.x, points.y);
         break;
+      case 'clear':
+        context.clearRect(0, 0, canvas.width, canvas.height);
       }
     }
   }
