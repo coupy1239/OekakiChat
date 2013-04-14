@@ -1,4 +1,4 @@
-﻿var http = require('http');
+﻿var http = require('http'),fs = require('fs');
 
 http.createServer(function (req, res) {
   fs.readFile('./index.html', 'UTF-8', function(err, data) {
