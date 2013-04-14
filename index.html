@@ -65,7 +65,6 @@ $(function() {
     var fromY;
     var drawFlag = false;
     var context = $("canvas").get(0).getContext('2d');
-    var io = require('socket.io');
     var socket = io.connect('http://coupuntu.c.node-ninja.com');
  
     // サーバからメッセージ受信
