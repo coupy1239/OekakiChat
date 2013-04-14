@@ -1,9 +1,10 @@
 {
-  "name": "oekakichat",
-  "version": "0.0.1",
-  "private": true,
-  "dependencies": {
-    "socket.io": ">= 0.8.7"
-    "express": "~2.5"
+    "name": "socket.io-paint"
+  , "version": "0.0.1"
+  , "private": true
+  , "dependencies": {
+      "express": "~2.5"
+    , "jade": ">= 0.0.1"
+    , "socket.io": ">= 0.8"
   }
 }
