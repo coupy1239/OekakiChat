@@ -52,12 +52,12 @@ document.addEventListener('DOMContentLoaded', function(){
     context.clearRect(0, 0, canvas.width, canvas.height);
     var points = {
         s: 'clear'
-      , x: 0
-      , y: 0
+      , x: positioning.x
+      , y: positioning.y
       , c: context.strokeStyle
       , id: canvas.id
-    }
-    paint.json.emit('paint points', points)    
+    };
+    paint.json.emit('paint points', points);    
   }, false);
 
   var colors = document.getElementById('colors').childNodes;
