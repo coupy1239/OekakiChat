@@ -1,8 +1,0 @@
-{
-  "name": "node-ninja-challenge-socketio-pulse",
-  "version": "0.0.1",
-  "private": true,
-  "dependencies": {
-    "socket.io": ">= 0.0.1"
-  }
-}
