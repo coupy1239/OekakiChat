@@ -12,6 +12,13 @@ a {
   position: absolute;
   top: 1px; left: 1px;
   border: 0px solid #888888;
+  z-index: 9998;
+}
+
+.mouse {
+  position: absolute;
+  top: 1px; left: 1px;
+  border: 0px solid #888888;
   z-index: 9999;
 }
 

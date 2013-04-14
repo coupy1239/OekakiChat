@@ -5,8 +5,11 @@ document.addEventListener('DOMContentLoaded', function(){
     painting(points);
   });
 
-  var canvas = document.querySelector('canvas');
+  var canvas = document.getElementById('p1');
   var context = canvas.getContext('2d');
+  
+  var mouselayer = document.getElementById('p2');
+  var ctxm = mouselayer.getContext('2d');
 
   context.lineWidth = 4;
   context.lineCap = 'round';
@@ -15,26 +18,34 @@ document.addEventListener('DOMContentLoaded', function(){
 
   var positioning = null;
   var drawing = false;
+  
+  //mouse
+  mouselayer.addEventListener('mousemove',function(event){
+      ctxm.clearRect(0, 0, canvas.width, canvas.height);
+      ctxm.beginPath();
+      ctxm.arc(event.clientX,event.clientY,context.lineWidth/2,0, Math.PI*2, true);
+      ctxm.fill();
+  });
 
-  canvas.addEventListener('mousedown', function(event) {
+  mouselayer.addEventListener('mousedown', function(event) {
     drawArc(event);
     drawing = true;
   }, false);
 
-  canvas.addEventListener('mousemove', function(event) {
+  mouselayer.addEventListener('mousemove', function(event) {
     if (drawing == true) {
       drawLine(event);
     }
   }, false);
 
-  canvas.addEventListener('mouseup', function(event) {
+  mouselayer.addEventListener('mouseup', function(event) {
     if (drawing == true) {
       drawLine(event);
       drawing = false;
     }
   }, false);
 
-  canvas.addEventListener('mouseout', function(event) {
+  mouselayer.addEventListener('mouseout', function(event) {
     if (drawing == true) {
       drawLine(event);
       drawing = false;
@@ -67,9 +78,16 @@ document.addEventListener('DOMContentLoaded', function(){
       var style = event.target.getAttribute('style');
       var color = style.match(/background:(#......)/)[1];
       context.strokeStyle = color;
-      context.fillStyle = context.strokeStyle
+      ctxm.strokeStyle = color;
+      context.fillStyle = context.strokeStyle;
+      ctxm.fillStyle = ctxm.strokeStyle
     }, false);
   }
+  
+  var brushsize = document.getElementById('brushsize');
+  brushsize.addEventListener('change',function(event){
+      context.lineWidth = brushsize.value;
+  });
 
   function drawArc(event) {
     event.preventDefault();
@@ -108,15 +126,21 @@ document.addEventListener('DOMContentLoaded', function(){
       context.fillStyle = context.strokeStyle;
       switch (points.s) {
       case 'line':
+        
         context.beginPath();
-        context.moveTo(points.x, points.y);
+        context.moveTo(points.x, points.y);   
         context.lineTo(points.xp, points.yp);
         context.closePath();
         context.stroke();
+        context.beginPath();
+        context.arc(points.x, points.y, context.lineWidth/2, 0, Math.PI*2, true);
+        context.fill();
+        context.arc(points.xp, points.yp, context.lineWidth/2, 0, Math.PI*2, true);
+        context.fill();
         break;
       case 'arc':
         context.beginPath();
-        context.arc(points.x, points.y, context.lineWidth/2, 0, Math.PI*2, true)
+        context.arc(points.x, points.y, context.lineWidth/2, 0, Math.PI*2, true);
         context.fill();
         context.beginPath();
         context.moveTo(points.x, points.y);
