@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', function(){
   
   var mouselayer = document.getElementById('p2');
   var ctxm = mouselayer.getContext('2d');
+  
+  var brushsize = 4;
 
   context.lineWidth = 4;
   context.lineCap = 'round';
@@ -23,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function(){
   mouselayer.addEventListener('mousemove',function(event){
       ctxm.clearRect(0, 0, canvas.width, canvas.height);
       ctxm.beginPath();
-      ctxm.arc(event.clientX,event.clientY,context.lineWidth/2,0, Math.PI*2, true);
+      ctxm.arc(event.clientX,event.clientY,brushsize/2,0, Math.PI*2, true);
       ctxm.fill();
   });
 
@@ -84,9 +86,9 @@ document.addEventListener('DOMContentLoaded', function(){
     }, false);
   }
   
-  var brushsize = document.getElementById('brushsize');
-  brushsize.addEventListener('change',function(event){
-      context.lineWidth = brushsize.value;
+  var brushslider = document.getElementById('brushsize');
+  brushslider.addEventListener('change',function(event){
+      brushsize = brushslider.value;
   });
 
   function drawArc(event) {
@@ -96,6 +98,7 @@ document.addEventListener('DOMContentLoaded', function(){
         s: 'arc'
       , x: positioning.x
       , y: positioning.y
+      , w: brushsize
       , c: context.strokeStyle
       , id: canvas.id
     }
@@ -112,6 +115,7 @@ document.addEventListener('DOMContentLoaded', function(){
       , y: positions.y
       , xp: positioning.x
       , yp: positioning.y
+      , w:  brushsize
       , c: context.strokeStyle
       , id: canvas.id
     }
@@ -124,9 +128,9 @@ document.addEventListener('DOMContentLoaded', function(){
     if (canvas.id == points.id) {
       context.strokeStyle = points.c;
       context.fillStyle = context.strokeStyle;
+      context.lineWidth = points.w;
       switch (points.s) {
-      case 'line':
-        
+      case 'line':        
         context.beginPath();
         context.moveTo(points.x, points.y);   
         context.lineTo(points.xp, points.yp);
