@@ -8,7 +8,7 @@ http.createServer(function (req, res) {
   
 });
 
-var io = require('socket.io').listen(app, { log: false });
+var io = require('socket.io').listen(http, { log: false });
 io.sockets.on('connection', function (socket) {
     socket.on('pulse', function (data) {
         socket.emit('pulse', data ? data * 2 : 0);
