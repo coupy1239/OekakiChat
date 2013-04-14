@@ -6,4 +6,13 @@ http.createServer(function (req, res) {
   res.end(data);
   });
   
-}).listen(80);
+});
+
+var io = require('socket.io').listen(app, { log: false });
+io.sockets.on('connection', function (socket) {
+    socket.on('pulse', function (data) {
+        socket.emit('pulse', data ? data * 2 : 0);
+    });
+});
+
+http.listen(80);
