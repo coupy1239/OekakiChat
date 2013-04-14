@@ -1,3 +1,4 @@
+require.paths.push('/usr/local/lib/node_modules');
 var app = require('express').createServer()
   , io = require('socket.io').listen(app);
 app.listen(8124);
