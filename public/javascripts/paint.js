@@ -49,7 +49,6 @@ document.addEventListener('DOMContentLoaded', function(){
 
   var clear = document.getElementById('clear');
   clear.addEventListener('click', function() {
-    context.clearRect(0, 0, canvas.width, canvas.height);
     var points = {
         s: 'clear'
       , x: positioning.x
@@ -57,7 +56,8 @@ document.addEventListener('DOMContentLoaded', function(){
       , c: context.strokeStyle
       , id: canvas.id
     };
-    paint.json.emit('paint points', points);    
+    paint.json.emit('paint points', points);
+    painting(points);    
   }, false);
 
   var colors = document.getElementById('colors').childNodes;
