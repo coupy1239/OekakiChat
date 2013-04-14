@@ -1,4 +1,4 @@
-﻿var http = require('http'),fs = require('fs');
+﻿//var http = require('http'),fs = require('fs');
 
 /*var app = http.createServer(function (req, res) {
   fs.readFile('./index.html', 'UTF-8', function(err, data) {
@@ -7,7 +7,7 @@
   });
 });
 */
-
+require.paths.push('/usr/local/lib/node_modules');
 var app = require('express').createServer()
   , io = require('socket.io').listen(app);
 app.listen(8124);
