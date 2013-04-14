@@ -123,6 +123,7 @@ document.addEventListener('DOMContentLoaded', function(){
         break;
       case 'clear':
         context.clearRect(0, 0, canvas.width, canvas.height);
+        break;
       }
     }
   }
