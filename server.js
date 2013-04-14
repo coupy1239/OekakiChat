@@ -6,6 +6,4 @@ http.createServer(function (req, res) {
   res.end(data);
   });
   
-});
-
-http.listen(80);
+}).listen(80);
