@@ -52,5 +52,8 @@ paint = io.of('/paint').on('connection', function (socket) {
   socket.on('paint points', function(data) {
     points.push(data);
     paint.emit('paint points', data);
-  });
+    if(data.s == 'clear'){
+        points = [];
+    }
+    });
 });
