@@ -10,21 +10,21 @@ a {
 
 .paint {
   position: absolute;
-  top: 1px; left: 1px;
+  top: 40px; left: 0px;
   border: 0px solid #888888;
-  z-index: 9998;
+  z-index: 0;
 }
 
 .mouse {
   position: absolute;
-  top: 1px; left: 1px;
+  top: 40px; left: 0px;
   border: 0px solid #888888;
-  z-index: 9999;
+  z-index: 1;
 }
 
 #tools {
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 0;
   font-weight: bold;
   width: 100%;
@@ -42,6 +42,12 @@ a {
   color: #fff;
   text-shadow: -1px 0 2px rgba(0,0,0,0.3);
   box-shadow: 0 0 1px rgba(0,0,0,0.5);
+  z-index: 1;
+}
+
+#brushsize {
+  display: inline-block;
+  vertical-align: middle;
 }
 
 #colors {

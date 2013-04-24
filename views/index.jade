@@ -1,27 +1,22 @@
 canvas.paint(id='p1', width='640', height='270')
-canvas.paint(id='p2', width='640', height='270')
+canvas.mouse(id='p2', width='640', height='270')
 
 div#tools
   button#clear clear
   button#save save
 
-  div#colors
-    div.color(style='background:#000000')
-    //
-      div.color(style='background:#808080')
-      div.color(style='background:#800000')
-      div.color(style='background:#808000')
-      div.color(style='background:#008000')
-      div.color(style='background:#008080')
-      div.color(style='background:#000080')
-      div.color(style='background:#800080')
-    div.color(style='background:#ffffff')
-    div.color(style='background:#c0c0c0')
-    div.color(style='background:#ff0000')
-    div.color(style='background:#ffff00')
-    div.color(style='background:#00ff00')
-    div.color(style='background:#00ffff')
-    div.color(style='background:#0000ff')
-    div.color(style='background:#ff00ff')
+  //
+    div#colors
+      div.color(style='background:#000000')
+      div.color(style='background:#ffffff')
+      div.color(style='background:#c0c0c0')
+      div.color(style='background:#ff0000')
+      div.color(style='background:#ffff00')
+      div.color(style='background:#00ff00')
+      div.color(style='background:#00ffff')
+      div.color(style='background:#0000ff')
+      div.color(style='background:#ff00ff')
   
-  input#brushsize(type='range',min='1',max='20')
+  input#brushsize(type='range',value=4,min='1',max='20')
+  
+  input#colorselector(id='cs',value="#000000",type='text',class="html5jp-cpick [show:0;hide:0;coloring:true]")

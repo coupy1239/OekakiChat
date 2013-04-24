@@ -10,22 +10,28 @@ document.addEventListener('DOMContentLoaded', function(){
   
   var mouselayer = document.getElementById('p2');
   var ctxm = mouselayer.getContext('2d');
-  
+    
   var brushsize = 4;
 
   context.lineWidth = 4;
   context.lineCap = 'round';
   context.fillStyle = 'black';
   context.strokeStyle = 'black';
+  
+  var mycolor = 'black';
 
   var positioning = null;
   var drawing = false;
+  var selecting = false;
+  
+  var colorselector = document.getElementById('cs');
   
   //mouse
   mouselayer.addEventListener('mousemove',function(event){
+      ctxm.fillStyle = colorselector.style.backgroundColor;
       ctxm.clearRect(0, 0, canvas.width, canvas.height);
       ctxm.beginPath();
-      ctxm.arc(event.clientX,event.clientY,brushsize/2,0, Math.PI*2, true);
+      ctxm.arc(event.offsetX,event.offsetY,brushsize/2,0, Math.PI*2, true);
       ctxm.fill();
   });
 
@@ -72,20 +78,18 @@ document.addEventListener('DOMContentLoaded', function(){
     paint.json.emit('paint points', points);
     painting(points);    
   }, false);
-
-  var colors = document.getElementById('colors').childNodes;
+  
+  //color
+  /*var colors = document.getElementById('colors').childNodes;
   for (var i = 0, color; color = colors[i]; i++) {
     if (color.nodeName.toLowerCase() != 'div') continue;
     color.addEventListener('click', function (event) {
       var style = event.target.getAttribute('style');
       var color = style.match(/background:(#......)/)[1];
-      context.strokeStyle = color;
-      ctxm.strokeStyle = color;
-      context.fillStyle = context.strokeStyle;
-      ctxm.fillStyle = ctxm.strokeStyle
+      mycolor = color;
     }, false);
-  }
-  
+  }*/
+    
   var brushslider = document.getElementById('brushsize');
   brushslider.addEventListener('change',function(event){
       brushsize = brushslider.value;
@@ -99,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function(){
       , x: positioning.x
       , y: positioning.y
       , w: brushsize
-      , c: context.strokeStyle
+      , c: colorselector.style.backgroundColor
       , id: canvas.id
     }
     paint.json.emit('paint points', points);
@@ -116,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function(){
       , xp: positioning.x
       , yp: positioning.y
       , w:  brushsize
-      , c: context.strokeStyle
+      , c: colorselector.style.backgroundColor
       , id: canvas.id
     }
     paint.json.emit('paint points', points);
