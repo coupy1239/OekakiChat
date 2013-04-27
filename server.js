@@ -4,6 +4,8 @@
  */
 
 var express = require('express');
+var http = require('http');
+var fs = require('fs');
 
 var app = module.exports = express.createServer();
 
@@ -34,12 +36,19 @@ app.get('/', function(req, res){
   });
 });
 
+app.get('/log',function(req,res){
+    res.render('log',{
+        title: 'Image log'
+    });
+});
+
 app.listen(80);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 
 // Server
 
 var points = [];
+var imglog = [];
 var io = require('socket.io').listen(app);
 
 paint = io.of('/paint').on('connection', function (socket) {
@@ -53,7 +62,10 @@ paint = io.of('/paint').on('connection', function (socket) {
     points.push(data);
     paint.emit('paint points', data);
     if(data.s == 'clear'){
+        var fd = __dirname + '/views/log.jade';
+        fs.openSync(fd,'a');
+        fs.appendFileSync(fd,'  li\n    a(href = \"' + data.url + '\") ' + data.time + '\n');
         points = [];
     }
-    });
+  });
 });
