@@ -1,17 +1,25 @@
 document.addEventListener('DOMContentLoaded', function(){
-
+  var imgarr = [];
+  imgarr = {'gnh':new Image()};
+  imgarr['gnh'].src = '/img/hibiki.png';
+  console.log(imgarr['gnh']);
+  
+  var randomID = Math.random();
+  
   var paint = new io.connect('/paint');
   paint.on('paint points', function(points) {
-    painting(points);
+      if(points.rid != randomID) painting(points);
   });
 
   var canvas = document.getElementById('p1');
   var context = canvas.getContext('2d');
   
   /*ここに白背景描画を書く*/
+  context.fillStyle = "white";
+  context.fillRect(0,0,canvas.width,canvas.height);
   
-  var mouselayer = document.getElementById('p2');
-  var ctxm = mouselayer.getContext('2d');
+  var mousecanvas = document.getElementById('p2');
+  var ctxm = mousecanvas.getContext('2d');
     
   var brushsize = 4;
 
@@ -26,40 +34,77 @@ document.addEventListener('DOMContentLoaded', function(){
   var drawing = false;
   var selecting = false;
   
-  var colorselector = document.getElementById('cs');
+  var cs = document.getElementById('cs'); 
+  var bs = document.getElementById('select');
+  
+  var mousepointer = function(){    
+        if (bs.value == 'pen') {
+            ctxm.fillStyle = cs.style.backgroundColor;
+            ctxm.clearRect(0, 0, mousecanvas.width, mousecanvas.height);
+            ctxm.beginPath();
+            ctxm.arc(event.offsetX, event.offsetY, brushsize / 2, 0, Math.PI * 2, true);
+            ctxm.fill();
+        }
+        else if (bs.value == 'eraser'){
+            ctxm.strokeStyle = 'black';
+            ctxm.fillStyle = 'white';
+            ctxm.clearRect(0, 0, mousecanvas.width, mousecanvas.height);
+            ctxm.beginPath();
+            ctxm.arc(event.offsetX, event.offsetY, brushsize / 2, 0, Math.PI * 2, true);
+            ctxm.stroke();
+            ctxm.fill();
+        }
+        else if (bs.value == 'gnh'){
+            ctxm.clearRect(0, 0, mousecanvas.width, mousecanvas.height);
+            ctxm.drawImage(imgarr['gnh'],event.offsetX-imgarr['gnh'].width*brushsize/4/2,event.offsetY-imgarr['gnh'].height*brushsize/4/2,imgarr['gnh'].width*brushsize/4,imgarr['gnh'].height*brushsize/4);
+        }
+  };
   
   //mouse
-  mouselayer.addEventListener('mousemove',function(event){
-      ctxm.fillStyle = colorselector.style.backgroundColor;
-      ctxm.clearRect(0, 0, canvas.width, canvas.height);
-      ctxm.beginPath();
-      ctxm.arc(event.offsetX,event.offsetY,brushsize/2,0, Math.PI*2, true);
-      ctxm.fill();
-  });
-
-  mouselayer.addEventListener('mousedown', function(event) {
-    drawArc(event);
+  mousecanvas.addEventListener('mousedown', function(event) {
     drawing = true;
+    if(bs.value=='pen') drawArc(event,cs.style.backgroundColor);
+    if(bs.value=='eraser') drawArc(event,'white');
+    if(bs.value=='gnh'){
+        event.preventDefault();
+        positioning = position(event);
+        var points = {
+        s: 'stamp'
+      , x: positioning.x
+      , y: positioning.y
+      , w: brushsize
+      , id: canvas.id
+      , rid: randomID
+      , img:'gnh'
+        }
+        paint.json.emit('paint points', points);
+        painting(points); 
+    } 
   }, false);
 
-  mouselayer.addEventListener('mousemove', function(event) {
+  mousecanvas.addEventListener('mousemove', function(event) {
+    mousepointer();
     if (drawing == true) {
-      drawLine(event);
+      if(bs.value=='pen') drawLine(event,cs.style.backgroundColor);
+      if(bs.value=='eraser') drawLine(event,'white');
     }
   }, false);
 
-  mouselayer.addEventListener('mouseup', function(event) {
+  mousecanvas.addEventListener('mouseup', function(event) {
     if (drawing == true) {
-      drawLine(event);
+      if(bs.value=='pen') drawLine(event,cs.style.backgroundColor);
+      if(bs.value=='eraser') drawLine(event,'white');
       drawing = false;
     }
   }, false);
-
-  mouselayer.addEventListener('mouseout', function(event) {
+    
+  mousecanvas.addEventListener('mouseout', function(event) {
     if (drawing == true) {
-      drawLine(event);
+      if(bs.value=='pen') drawLine(event,cs.style.backgroundColor);
+      if(bs.value=='eraser') drawLine(event,'white');
       drawing = false;
     }
+    ctxm.clearRect(0, 0, mousecanvas.width, mousecanvas.height);
   }, false);
 
   var save = document.getElementById('save');
@@ -73,10 +118,8 @@ document.addEventListener('DOMContentLoaded', function(){
     var date = new Date();
     var points = {
         s: 'clear'
-      , x: positioning.x
-      , y: positioning.y
-      , c: context.strokeStyle
       , id: canvas.id
+      , rid: randomID
       , url: canvas.toDataURL()
       , time: yyyymmddhhmiss()
     };
@@ -88,24 +131,13 @@ document.addEventListener('DOMContentLoaded', function(){
   log.addEventListener('click',function(){
       window.open('/log',null);
   },false);
-  
-  //color
-  /*var colors = document.getElementById('colors').childNodes;
-  for (var i = 0, color; color = colors[i]; i++) {
-    if (color.nodeName.toLowerCase() != 'div') continue;
-    color.addEventListener('click', function (event) {
-      var style = event.target.getAttribute('style');
-      var color = style.match(/background:(#......)/)[1];
-      mycolor = color;
-    }, false);
-  }*/
     
   var brushslider = document.getElementById('brushsize');
   brushslider.addEventListener('change',function(event){
       brushsize = brushslider.value;
   });
 
-  function drawArc(event) {
+  function drawArc(event,color) {
     event.preventDefault();
     positioning = position(event);
     var points = {
@@ -113,14 +145,15 @@ document.addEventListener('DOMContentLoaded', function(){
       , x: positioning.x
       , y: positioning.y
       , w: brushsize
-      , c: colorselector.style.backgroundColor
+      , c: color
       , id: canvas.id
+      , rid: randomID
     }
     paint.json.emit('paint points', points);
     painting(points);
   }
 
-  function drawLine(event) {
+  function drawLine(event,color) {
     event.preventDefault();
     var positions = position(event);
     var points = {
@@ -130,8 +163,9 @@ document.addEventListener('DOMContentLoaded', function(){
       , xp: positioning.x
       , yp: positioning.y
       , w:  brushsize
-      , c: colorselector.style.backgroundColor
+      , c: color
       , id: canvas.id
+      , rid: randomID
     }
     paint.json.emit('paint points', points);
     painting(points);
@@ -163,9 +197,14 @@ document.addEventListener('DOMContentLoaded', function(){
         context.beginPath();
         context.moveTo(points.x, points.y);
         break;
-      case 'clear':
-        context.clearRect(0, 0, canvas.width, canvas.height);
+      case 'stamp':
+        context.drawImage(imgarr[points.img],points.x-imgarr['gnh'].width*points.w/4/2,points.y-imgarr['gnh'].height*points.w/4/2,imgarr['gnh'].width*points.w/4,imgarr['gnh'].height*points.w/4);
         break;
+      case 'clear':
+        context.fillStyle = "rgb(255,255,255)";
+        context.fillRect(0,0,canvas.width,canvas.height);
+        break;
+
       }
     }
   }

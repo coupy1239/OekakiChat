@@ -15,6 +15,7 @@ local.properties
 .classpath
 .settings/
 .loadpath
+views/log.jade
 
 # External tool builders
 .externalToolBuilders/
