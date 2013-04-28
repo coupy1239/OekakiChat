@@ -66,7 +66,7 @@ paint = io.of('/paint').on('connection', function (socket) {
         fs.openSync(fd,'a');
         fs.appendFileSync(fd,'  li\n    a(href = \"' + data.url + '\") ' + data.time + '\n');
         
-        var fd = __dirname + '/public/log';
+        var fd = __dirname + '/public/paintlog';
         fs.openSync(fd,'a');
         fs.appendFileSync(fd,'  li\n    a(href = \"' + data.url + '\") ' + data.time + '\n');
         
