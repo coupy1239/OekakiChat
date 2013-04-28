@@ -65,6 +65,11 @@ paint = io.of('/paint').on('connection', function (socket) {
         var fd = __dirname + '/views/log.jade';
         fs.openSync(fd,'a');
         fs.appendFileSync(fd,'  li\n    a(href = \"' + data.url + '\") ' + data.time + '\n');
+        
+        var fd = __dirname + '/public/log';
+        fs.openSync(fd,'a');
+        fs.appendFileSync(fd,'  li\n    a(href = \"' + data.url + '\") ' + data.time + '\n');
+        
         points = [];
     }
   });
