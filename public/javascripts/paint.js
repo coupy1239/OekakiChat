@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function(){
   var imgarr = [];
   imgarr = {'gnh':new Image()};
   imgarr['gnh'].src = '/img/hibiki.png';
-  console.log(imgarr['gnh']);
+  //console.log(imgarr['gnh']);
   
   var randomID = Math.random();
   
@@ -37,12 +37,14 @@ document.addEventListener('DOMContentLoaded', function(){
   var cs = document.getElementById('cs'); 
   var bs = document.getElementById('select');
   
-  var mousepointer = function(){    
+  var mousepointer = function(event){
+        event.preventDefault();
+        var positions = position(event);    
         if (bs.value == 'pen') {
             ctxm.fillStyle = cs.style.backgroundColor;
             ctxm.clearRect(0, 0, mousecanvas.width, mousecanvas.height);
             ctxm.beginPath();
-            ctxm.arc(event.offsetX, event.offsetY, brushsize / 2, 0, Math.PI * 2, true);
+            ctxm.arc(positions.x, positions.y, brushsize / 2, 0, Math.PI * 2, true);
             ctxm.fill();
         }
         else if (bs.value == 'eraser'){
@@ -50,13 +52,13 @@ document.addEventListener('DOMContentLoaded', function(){
             ctxm.fillStyle = 'white';
             ctxm.clearRect(0, 0, mousecanvas.width, mousecanvas.height);
             ctxm.beginPath();
-            ctxm.arc(event.offsetX, event.offsetY, brushsize / 2, 0, Math.PI * 2, true);
+            ctxm.arc(positions.x, positions.y, brushsize / 2, 0, Math.PI * 2, true);
             ctxm.stroke();
             ctxm.fill();
         }
         else if (bs.value == 'gnh'){
             ctxm.clearRect(0, 0, mousecanvas.width, mousecanvas.height);
-            ctxm.drawImage(imgarr['gnh'],event.offsetX-imgarr['gnh'].width*brushsize/4/2,event.offsetY-imgarr['gnh'].height*brushsize/4/2,imgarr['gnh'].width*brushsize/4,imgarr['gnh'].height*brushsize/4);
+            ctxm.drawImage(imgarr['gnh'],positions.x-imgarr['gnh'].width*brushsize/4/2,positions.y-imgarr['gnh'].height*brushsize/4/2,imgarr['gnh'].width*brushsize/4,imgarr['gnh'].height*brushsize/4);
         }
   };
   
@@ -83,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function(){
   }, false);
 
   mousecanvas.addEventListener('mousemove', function(event) {
-    mousepointer();
+    mousepointer(event);
     if (drawing == true) {
       if(bs.value=='pen') drawLine(event,cs.style.backgroundColor);
       if(bs.value=='eraser') drawLine(event,'white');
@@ -174,11 +176,12 @@ document.addEventListener('DOMContentLoaded', function(){
 
   function painting(points) {
     if (canvas.id == points.id) {
-      context.strokeStyle = points.c;
-      context.fillStyle = context.strokeStyle;
+      
       context.lineWidth = points.w;
       switch (points.s) {
-      case 'line':        
+      case 'line':
+        context.strokeStyle = points.c;
+        context.fillStyle = points.c;        
         context.beginPath();
         context.moveTo(points.x, points.y);   
         context.lineTo(points.xp, points.yp);
@@ -191,6 +194,8 @@ document.addEventListener('DOMContentLoaded', function(){
         context.fill();
         break;
       case 'arc':
+        context.strokeStyle = points.c;
+        context.fillStyle = points.c;
         context.beginPath();
         context.arc(points.x, points.y, context.lineWidth/2, 0, Math.PI*2, true);
         context.fill();
