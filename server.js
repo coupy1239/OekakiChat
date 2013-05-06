@@ -62,7 +62,7 @@ paint = io.of('/paint').on('connection', function (socket) {
     points.push(data);
     paint.emit('paint points', data);
     if(data.s == 'clear'){
-        /*
+        
         var b64data = data.url.split(",")[1];
         var buf = new Buffer(b64data,'base64');
         var fd = __dirname + '/public/img/log/' + data.time +'.png';
@@ -72,8 +72,8 @@ paint = io.of('/paint').on('connection', function (socket) {
         var fd = __dirname + '/views/log.jade';
         fs.openSync(fd,'a');
         fs.appendFileSync(fd,'  li\n    a(href = \"' + '/img/log/' + data.time + '.png\") ' + data.time + '\n');
-        */
-       
+        
+       /*
         //atodekeseu
         var logdata;
         var fd = __dirname + '/public/img/paintlog';
@@ -108,6 +108,7 @@ paint = io.of('/paint').on('connection', function (socket) {
             fs.appendFileSync(fd,'  li\n    a(href = \"' + '/img/log/' + datearray[i] + '.png\") ' + datearray[i] + '\n');
             
         }
+        */
         
         points = [];
     }
