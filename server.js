@@ -62,13 +62,52 @@ paint = io.of('/paint').on('connection', function (socket) {
     points.push(data);
     paint.emit('paint points', data);
     if(data.s == 'clear'){
+        /*
+        var b64data = data.url.split(",")[1];
+        var buf = new Buffer(b64data,'base64');
+        var fd = __dirname + '/public/img/log/' + data.time +'.png';
+        fs.openSync(fd,'a');
+        fs.appendFileSync(fd,buf);
+        
         var fd = __dirname + '/views/log.jade';
         fs.openSync(fd,'a');
-        fs.appendFileSync(fd,'  li\n    a(href = \"' + data.url + '\") ' + data.time + '\n');
-        
-        var fd = __dirname + '/public/paintlog';
-        fs.openSync(fd,'a');
-        fs.appendFileSync(fd,'  li\n    a(href = \"' + data.url + '\") ' + data.time + '\n');
+        fs.appendFileSync(fd,'  li\n    a(href = \"' + '/img/log/' + data.time + '.png\") ' + data.time + '\n');
+        */
+       
+        //atodekeseu
+        var logdata;
+        var fd = __dirname + '/public/img/paintlog';
+        var utf8log = fs.readFileSync(fd); 
+        var strlog = utf8log.toString('utf8');
+        var splitlog = strlog.split('\"');
+        var buflog = new Array();
+        var datearray = new Array();
+        for(var i=1;i<splitlog.length;i++){
+                    console.log(i);
+            if(i%2==1){
+                    var b64log = new Buffer(splitlog[i].replace('data:image/png;base64,',''),'base64');
+                    buflog.push(b64log);
+                    console.log(b64log.toString('hex').substr(0,20));
+            }
+            else{
+                if(splitlog[i]){
+                    datearray.push(splitlog[i].substr(2,19));
+                    console.log(splitlog[i].substr(2,19)); 
+                }
+            }     
+        }
+                    console.log('bufloglength:'+buflog.length);
+                    console.log('datearraylength:'+datearray.length);
+        for(var i=0;i<datearray.length;i++){
+            var fd = __dirname + '/public/img/log/' + datearray[i] +'.png';
+            fs.openSync(fd,'a');
+            fs.appendFileSync(fd,buflog[i]);
+            
+            var fd = __dirname + '/views/log.jade';
+            fs.openSync(fd,'a');
+            fs.appendFileSync(fd,'  li\n    a(href = \"' + '/img/log/' + datearray[i] + '.png\") ' + datearray[i] + '\n');
+            
+        }
         
         points = [];
     }
