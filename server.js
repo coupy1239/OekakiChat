@@ -184,7 +184,7 @@ paint = io.of('/paint').on('connection', function (socket) {
             global.gc();
             giraffi_client.level("info").logger('gc!!');
         }else{
-            iraffi_client.level("info").logger('cannot gc!!');
+            giraffi_client.level("info").logger('cannot gc!!');
         }
     }
   });
