@@ -6,8 +6,7 @@
 var express = require('express');
 var http = require('http');
 var fs = require('fs');
-var Log = require('log')
-  , log = new Log(Log.DEBUG);
+var giraffi_client = require('giraffi').createClient();
 
 var app = module.exports = express.createServer();
 
@@ -183,9 +182,9 @@ paint = io.of('/paint').on('connection', function (socket) {
     }else{
         if(global.gc) {
             global.gc();
-            log.info('gc!!');
+            giraffi_client.level("info").logger('gc!!');
         }else{
-            log.info('cannot gc!!');
+            iraffi_client.level("info").logger('cannot gc!!');
         }
     }
   });
