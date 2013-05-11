@@ -6,6 +6,8 @@
 var express = require('express');
 var http = require('http');
 var fs = require('fs');
+var Log = require('log')
+  , log = new Log(Log.DEBUG);
 
 var app = module.exports = express.createServer();
 
@@ -179,7 +181,12 @@ paint = io.of('/paint').on('connection', function (socket) {
         
         points = [];
     }else{
-        console.log(clientsuu+'\n');
+        if(global.gc) {
+            global.gc();
+            log.info('gc!!');
+        }else{
+            log.info('cannot gc!!');
+        }
     }
   });
   
@@ -189,7 +196,7 @@ paint = io.of('/paint').on('connection', function (socket) {
       var fd = __dirname + '/public/connection';
       fs.openSync(fd,'a');
       fs.appendFileSync(fd,date + ' ' + clientsuu + '\n');
-  })
+  });
 });
 
 var toDoubleDigits = function(num) {
