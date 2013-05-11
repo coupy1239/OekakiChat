@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function(){
   
   var log = document.getElementById('log');
   log.addEventListener('click',function(){
-      window.open('/log',null);
+      window.open('/log/page1',null);
   },false);
     
   var brushslider = document.getElementById('brushsize');

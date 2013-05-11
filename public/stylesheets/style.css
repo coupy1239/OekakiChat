@@ -54,3 +54,17 @@ a {
   display: inline-block;
   vertical-align: middle;
 }
+
+#thumb{
+	width:128px;
+	height:54px;
+}
+
+#mokuji ul{
+	list-style:none;
+}
+#mokuji li{
+	float:left;
+	margin-right:5px;
+	display: inline-block;
+}
