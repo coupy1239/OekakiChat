@@ -1,4 +1,4 @@
 {
   "npm": true
-  "main":"--expose_gc server.js"
+  "main":"--nouse_idle_notification --expose_gc server.js"
 }
