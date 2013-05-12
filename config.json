@@ -1,5 +1,4 @@
 {
   "npm": true,
-  "main":"server.js",
-  "node": "/home/node/.nvm/v0.8.18/bin/node --expose_gc"
+  "main":"server.js"
 }
