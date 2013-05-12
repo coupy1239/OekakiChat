@@ -1,4 +1,7 @@
 {
   "npm": true,
-  "main":"--expose_gc server.js"
+  "main":"server.js",
+  "args":[
+    "--expose_gc"
+  ]
 }
