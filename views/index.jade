@@ -5,23 +5,11 @@ div#tools
   button#clear clear
   button#save save
 
-  //
-    div#colors
-      div.color(style='background:#000000')
-      div.color(style='background:#ffffff')
-      div.color(style='background:#c0c0c0')
-      div.color(style='background:#ff0000')
-      div.color(style='background:#ffff00')
-      div.color(style='background:#00ff00')
-      div.color(style='background:#00ffff')
-      div.color(style='background:#0000ff')
-      div.color(style='background:#ff00ff')
+  div(id='brushsize')
   
-  input#brushsize(type='range',value=4,min='1',max='20')
+  input(id='cs',value="#000000",type='text',class="html5jp-cpick [show:0;hide:0;coloring:true]")
   
-  input#colorselector(id='cs',value="#000000",type='text',class="html5jp-cpick [show:0;hide:0;coloring:true]")
-  
-  form#brushselector(id='bs')
+  form(id='bs')
     select#mytextarea(id='select')
       option#pen(value='pen') ペン
       option#eraser(value='eraser') 消しゴム

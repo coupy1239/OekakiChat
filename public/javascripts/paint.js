@@ -7,9 +7,14 @@ document.addEventListener('DOMContentLoaded', function(){
   var randomID = Math.random();
   
   var paint = new io.connect('/paint');
-  paint.on('paint points', function(points) {
-      if(points.rid != randomID) painting(points);
+  //受信
+  paint.on('paint points', function(data) {
+    if(data[0].rid != randomID) {
+        for(var i in data) painting(data[i]);
+    }
   });
+  
+  var bufpts = new Array();
 
   var canvas = document.getElementById('p1');
   var context = canvas.getContext('2d');
@@ -33,6 +38,8 @@ document.addEventListener('DOMContentLoaded', function(){
   var positioning = null;
   var drawing = false;
   var selecting = false;
+  var buffering = false;
+  var clearing = false;
   
   var cs = document.getElementById('cs'); 
   var bs = document.getElementById('select');
@@ -79,7 +86,8 @@ document.addEventListener('DOMContentLoaded', function(){
       , rid: randomID
       , img:'gnh'
         }
-        paint.json.emit('paint points', points);
+        //paint.json.emit('paint points', points);
+        buffer(points);
         painting(points); 
     } 
   }, false);
@@ -108,35 +116,51 @@ document.addEventListener('DOMContentLoaded', function(){
     }
     ctxm.clearRect(0, 0, mousecanvas.width, mousecanvas.height);
   }, false);
-
+  
+  //画像表示
   var save = document.getElementById('save');
   save.addEventListener('click', function() {
     var url = canvas.toDataURL();
     window.open(url,'data url');
   }, false);
-
+  
+  //クリア
   var clear = document.getElementById('clear');
   clear.addEventListener('click', function() {
-    var date = new Date();
-    var points = {
-        s: 'clear'
-      , id: canvas.id
-      , rid: randomID
-      , url: canvas.toDataURL()
-      , time: yyyymmddhhmiss()
-    };
-    paint.json.emit('paint points', points);
-    painting(points);    
+    if(!clearing){
+      var date = new Date();
+      var points = {
+          s: 'clear'
+        , id: canvas.id
+        , rid: randomID
+        , url: canvas.toDataURL()
+        , time: yyyymmddhhmiss()
+      };
+      //paint.json.emit('paint points', points);
+      buffer(points);
+      painting(points);
+    }
   }, false);
   
+  //ログ表示
   var log = document.getElementById('log');
   log.addEventListener('click',function(){
       window.open('/log/page1',null);
   },false);
-    
+  
+  //ブラシサイズ選択
+  /*  
   var brushslider = document.getElementById('brushsize');
   brushslider.addEventListener('change',function(event){
       brushsize = brushslider.value;
+  });
+  */
+  $('#brushsize').slider({
+      min:1,
+      max:20,
+      change:function(event,ui){
+          brushsize = ui.value;
+      }
   });
 
   function drawArc(event,color) {
@@ -151,7 +175,8 @@ document.addEventListener('DOMContentLoaded', function(){
       , id: canvas.id
       , rid: randomID
     }
-    paint.json.emit('paint points', points);
+    //paint.json.emit('paint points', points);
+    buffer(points);
     painting(points);
   }
 
@@ -169,14 +194,15 @@ document.addEventListener('DOMContentLoaded', function(){
       , id: canvas.id
       , rid: randomID
     }
-    paint.json.emit('paint points', points);
+    //paint.json.emit('paint points', points);
+    buffer(points)
     painting(points);
     positioning = points;
   }
 
   function painting(points) {
+    clearing = false;
     if (canvas.id == points.id) {
-      
       context.lineWidth = points.w;
       switch (points.s) {
       case 'line':
@@ -206,6 +232,7 @@ document.addEventListener('DOMContentLoaded', function(){
         context.drawImage(imgarr[points.img],points.x-imgarr['gnh'].width*points.w/4/2,points.y-imgarr['gnh'].height*points.w/4/2,imgarr['gnh'].width*points.w/4,imgarr['gnh'].height*points.w/4);
         break;
       case 'clear':
+        clearing = true;
         context.fillStyle = "rgb(255,255,255)";
         context.fillRect(0,0,canvas.width,canvas.height);
         break;
@@ -213,6 +240,23 @@ document.addEventListener('DOMContentLoaded', function(){
       }
     }
   }
+  
+  function buffer(points){
+      bufpts.push(points);
+      
+      if(points.s == 'clear'){
+          emitting();
+      }else if(!buffering){
+          buffering = true;
+          setTimeout(function(){emitting()},500);          
+      }
+  }
+  function emitting(){
+          paint.json.emit('paint points', bufpts);
+          bufpts = [];
+          buffering = false;
+  }
+  
 }, false);
 
 function position(event) {

@@ -61,28 +61,29 @@ var io = require('socket.io').listen(app);
 var clientsuu = 0;
 
 paint = io.of('/paint').on('connection', function (socket) {
-  //接続時
+  ////接続時
+  //接続数記録
   clientsuu++;
   var date = yyyymmddhhmiss();
   var path = __dirname + '/public/connection';
   fd = fs.openSync(path,'a');
   fs.appendFileSync(path,date + ' ' + clientsuu + '\n');
   fs.closeSync(fd);
-  
+  //全データ送信
   if (points.length > 0) {
-    for (var i in points) {
-      socket.json.emit('paint points', points[i]);
-    }
+      socket.json.emit('paint points', points);
   }
 
   socket.on('paint points', function(data) {
-    points.push(data);
-    paint.emit('paint points', data);
-    if(data.s == 'clear'){
-        
-        var b64data = data.url.split(",")[1];
+    ////受信
+    for(var i in data) points.push(data[i]);
+    paint.emit('paint points', data);//全クライアントに送信
+    //clear時
+    if(data[data.length-1].s == 'clear'){
+        //画像保存
+        var b64data = data[data.length-1].url.split(",")[1];
         var buf = new Buffer(b64data,'base64');
-        var path = __dirname + '/public/img/log/' + data.time +'.png';
+        var path = __dirname + '/public/img/log/' + data[data.length-1].time +'.png';
         var fd = fs.openSync(path,'a');
         fs.appendFileSync(path,buf);
         fs.closeSync(fd);
@@ -129,6 +130,8 @@ paint = io.of('/paint').on('connection', function (socket) {
                 }
             } 
         } 
+        
+        points = [];//pointsclear
         
         
         /*ログ生成
@@ -177,8 +180,6 @@ paint = io.of('/paint').on('connection', function (socket) {
             
         }
         */
-        
-        points = [];
     }else{
         if(global.gc) {
             global.gc();

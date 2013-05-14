@@ -48,6 +48,11 @@ a {
 #brushsize {
   display: inline-block;
   vertical-align: middle;
+  width:100px;
+  height:8px;
+  margin-left:15px;
+  margin-right:15px;
+  z-index:2;
 }
 
 #bs {
