@@ -78,8 +78,9 @@ paint = io.of('/paint').on('connection', function (socket) {
     ////受信
     for(var i in data) points.push(data[i]);
     paint.emit('paint points', data);//全クライアントに送信
-    //clear時
-    if(data[data.length-1].s == 'clear'){
+
+    //clearsave時
+    if(data[data.length-1].s == 'clear'||data[data.length-1].s == 'save'){
         //画像保存
         var b64data = data[data.length-1].url.split(",")[1];
         var buf = new Buffer(b64data,'base64');
@@ -131,7 +132,7 @@ paint = io.of('/paint').on('connection', function (socket) {
             } 
         } 
         
-        points = [];//pointsclear
+        if(data[data.length-1].s == 'clear') points = [];//pointsclear
         
         
         /*ログ生成

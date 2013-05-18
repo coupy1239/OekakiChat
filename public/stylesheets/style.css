@@ -26,7 +26,6 @@ a {
   position: absolute;
   top: 0;
   left: 0;
-  font-weight: bold;
   width: 100%;
   height: 40px;
   line-height: 1;
@@ -39,26 +38,97 @@ a {
   #888, #666
   );
   background: -moz-linear-gradient(top, #888, #666);
-  color: #fff;
-  text-shadow: -1px 0 2px rgba(0,0,0,0.3);
   box-shadow: 0 0 1px rgba(0,0,0,0.5);
   z-index: 1;
 }
 
+#clear{
+	cursor: pointer;
+	padding: 5px 10px;
+	float: left;
+	border: solid 1px #aaa;
+	margin-left: -1px;
+	background: #eee;
+	background-image: -moz-linear-gradient(top, #F6F6F6, #ccc);
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#F6F6F6), to(#ccc));
+	text-shadow: 1px 1px 0px #fff;
+}
+#save{
+	cursor: pointer;
+	padding: 5px 10px;
+	float: left;
+	border: solid 1px #aaa;
+	margin-left: -1px;
+	background: #eee;
+	background-image: -moz-linear-gradient(top, #F6F6F6, #ccc);
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#F6F6F6), to(#ccc));
+	text-shadow: 1px 1px 0px #fff;
+}
+#log{
+	cursor: pointer;
+	padding: 5px 10px;
+	float: left;
+	border: solid 1px #aaa;
+	margin-left: -1px;
+	background: #eee;
+	background-image: -moz-linear-gradient(top, #F6F6F6, #ccc);
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#F6F6F6), to(#ccc));
+	text-shadow: 1px 1px 0px #fff;
+}
+
 #brushsize {
+  float:left;
   display: inline-block;
   vertical-align: middle;
   width:100px;
   height:8px;
+  margin-top:10px;
   margin-left:15px;
   margin-right:15px;
   z-index:2;
 }
 
-#bs {
+/*#bs {
   display: inline-block;
   vertical-align: middle;
+}*/
+#cs {
+	float:left;
 }
+
+#brushgroup {
+	display: inline-block;
+    vertical-align: middle;
+	float:left;
+	margin-top:5px;
+}
+
+#brushgroup input {
+	display:none;
+}
+
+#brushgroup label{
+	font-size:10px;
+	cursor: pointer;
+	padding: 5px 10px;
+	float: left;
+	border: solid 1px #aaa;
+	margin-left: -1px;
+	background: #eee;
+	background-image: -moz-linear-gradient(top, #F6F6F6, #ccc);
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#F6F6F6), to(#ccc));
+	text-shadow: 1px 1px 0px #fff;
+}
+
+#brushgroup input:checked + label {
+    color: #fff;
+	background: #C3C3C3;
+	background-image: -moz-linear-gradient(top, #C3C3C3, #DBDBDB);
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#C3C3C3), to(#DBDBDB));
+	text-shadow: 0px 0px 0px #fff;
+}
+
+
 
 #thumb{
 	width:128px;
@@ -73,3 +143,5 @@ a {
 	margin-right:5px;
 	display: inline-block;
 }
+
+

@@ -1,3 +1,8 @@
+//if IE
+  object(id='Wacom',classid='CLSID:449E4080-7C69-4767-A1AE-6AAE25B0B906',codebase="http://www.wacom.com/U/plugins/Windows/WacomIE.cab#Version=-1,-1,-1,-1")
+
+embed(name="wacom-plugin",id="wacom-plugin",type="application/x-wacom-tablet",hidden="TRUE",pluginspage="http://www.wacom.com/productsupport/plugin.php")
+
 canvas.paint(id='p1', width='640', height='270')
 canvas.mouse(id='p2', width='640', height='270')
 
@@ -9,10 +14,21 @@ div#tools
   
   input(id='cs',value="#000000",type='text',class="html5jp-cpick [show:0;hide:0;coloring:true]")
   
-  form(id='bs')
-    select#mytextarea(id='select')
-      option#pen(value='pen') ペン
-      option#eraser(value='eraser') 消しゴム
-      option#gnh(value='gnh') 我那覇響
+  div(id='brushgroup')
+    input(id='brush1',type='radio',name="bg",value="pen",checked)
+    label(for='brush1') ペン
+    input(id='brush2',type='radio',name="bg",value="eraser")
+    label(for='brush2') 消しゴム
+    input(id='brush3',type='radio',name="bg",value="spuit")
+    label(for='brush3') スポイト
+    input(id='brush3',type='radio',name="bg",value="gnh")
+    label(for='brush3') 我那覇響
+  
+  //
+    form(id='bs')
+      select#mytextarea(id='select')
+        option#pen(value='pen') ペン
+        option#eraser(value='eraser') 消しゴム
+        option#gnh(value='gnh') 我那覇響
       
   button#log log
