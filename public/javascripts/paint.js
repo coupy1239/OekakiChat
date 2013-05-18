@@ -44,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function(){
   var selecting = false;
   var buffering = false;
   var clearing = false;
+  var mouseout = false;
   var brushstyle = 'pen';
   
   var cs = document.getElementById('cs'); 
@@ -117,14 +118,20 @@ document.addEventListener('DOMContentLoaded', function(){
   }, false);
 
   mousecanvas.addEventListener('mousemove', function(event) {
-    mousepointer(event);
-    if (drawing == true) {
-      if(brushstyle=='pen') drawLine(event,cs.style.backgroundColor);
-      if(brushstyle=='eraser') drawLine(event,'white');
+    console.log('mousemove');
+    console.log(browser.indexOf("IE"));
+    console.log(mouseout);
+    if(browser.indexOf("IE") == -1||!mouseout){
+      mousepointer(event);
+      if (drawing == true) {
+        if(brushstyle=='pen') drawLine(event,cs.style.backgroundColor);
+        if(brushstyle=='eraser') drawLine(event,'white');
+      }
     }
   }, false);
 
   mousecanvas.addEventListener('mouseup', function(event) {
+      console.log('mouseup');
     if (drawing == true) {
       if(brushstyle=='pen') drawLine(event,cs.style.backgroundColor);
       if(brushstyle=='eraser') drawLine(event,'white');
@@ -133,6 +140,8 @@ document.addEventListener('DOMContentLoaded', function(){
   }, false);
     
   mousecanvas.addEventListener('mouseout', function(event) {
+      console.log('mouseout');
+      mouseout=true;
     if (drawing == true) {
       positioning = position(event);
       if(brushstyle=='pen') drawLine(event,cs.style.backgroundColor);
@@ -143,6 +152,8 @@ document.addEventListener('DOMContentLoaded', function(){
   }, false);
   
   mousecanvas.addEventListener('mouseover', function(event) {
+      console.log('mouseover');
+      mouseout = false;
     if (drawing == true) {
         if(browser.indexOf("Chrome") != -1){
             if(Event.isLeftClick(event)){
@@ -360,10 +371,12 @@ function getPressure() {
     var plugin = getWacomPlugin();
     var pressure=1.0;
     if(! typeof plugin === "undefined") pressure = plugin.pressure;
+    /*
     console.log('plugin:'+plugin);
     console.log('pluginisWacom:'+plugin.isWacom);
     console.log('plugin.pressure:'+plugin.pressure);
     console.log('type of plugin:'+ typeof plugin);
     console.log('pressure:'+pressure);
+    */
     return pressure;
 }
