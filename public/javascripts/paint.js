@@ -353,8 +353,8 @@ var pressure = getWacomPlugin().pressure;
 function getPressure() {
     //筆圧取得
     var plugin = getWacomPlugin();
-    var pressure;
+    var pressure=1.0;
     if(plugin) pressure = plugin.pressure;
-    else pressure = 1.0;
+    console.log('pressure:'+pressure);
     return pressure;
 }
