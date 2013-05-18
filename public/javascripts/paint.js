@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', function(){
   
   jQuery.noConflict()
-    
+  var browser = navigator.userAgent;
+  console.log(browser);
   var imgarr = [];
   imgarr = {'gnh':new Image()};
   imgarr['gnh'].src = '/img/hibiki.png';
@@ -143,9 +144,13 @@ document.addEventListener('DOMContentLoaded', function(){
   
   mousecanvas.addEventListener('mouseover', function(event) {
     if (drawing == true) {
-        if(Event.isLeftClick(event)){
-            if(brushstyle=='pen') drawArc(event,cs.style.backgroundColor);
-            if(brushstyle=='eraser') drawArc(event,'white');
+        if(browser.indexOf("Chrome") != -1){
+            if(Event.isLeftClick(event)){
+                if(brushstyle=='pen') drawArc(event,cs.style.backgroundColor);
+                if(brushstyle=='eraser') drawArc(event,'white');
+            }else{
+                drawing = false;
+            }
         }else{
             drawing = false;
         }
