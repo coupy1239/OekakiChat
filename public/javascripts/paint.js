@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function(){
         }
         else if (brushstyle == 'gnh'){
             ctxm.clearRect(0, 0, mousecanvas.width, mousecanvas.height);
-            ctxm.drawImage(imgarr['gnh'],positions.x-imgarr['gnh'].width*brushsize/4/2,positions.y-imgarr['gnh'].height*brushsize/4/2,imgarr['gnh'].width*brushsize/4,imgarr['gnh'].height*brushsize/4);
+            ctxm.drawImage(imgarr['gnh'],positions.x-imgarr['gnh'].width*brushsize/4/2/2,positions.y-imgarr['gnh'].height*brushsize/4/2/2,imgarr['gnh'].width*brushsize/4/2,imgarr['gnh'].height*brushsize/4/2);
         }
         else if (brushstyle == 'spuit'){
             
@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', function(){
   jQuery('#brushsize').slider({
       value:4,
       min:1,
-      max:20,
+      max:30,
       change:function(event,ui){
           console.log("kawatteruyo!");
           brushsize = ui.value;
@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function(){
         context.moveTo(points.x, points.y);
         break;
       case 'stamp':
-        context.drawImage(imgarr[points.img],points.x-imgarr['gnh'].width*points.w/4/2,points.y-imgarr['gnh'].height*points.w/4/2,imgarr['gnh'].width*points.w/4,imgarr['gnh'].height*points.w/4);
+        context.drawImage(imgarr[points.img],points.x-imgarr['gnh'].width*points.w/4/2/2,points.y-imgarr['gnh'].height*points.w/4/2/2,imgarr['gnh'].width*points.w/4/2,imgarr['gnh'].height*points.w/4/2);
         break;
       case 'clear':
         clearing = true;
