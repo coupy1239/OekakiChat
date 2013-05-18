@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function(){
-  jQuery.noConflict()
   
+  jQuery.noConflict()
+    
   var imgarr = [];
   imgarr = {'gnh':new Image()};
   imgarr['gnh'].src = '/img/hibiki.png';

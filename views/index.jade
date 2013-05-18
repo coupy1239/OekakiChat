@@ -1,7 +1,8 @@
 //if IE
   object(id='Wacom',classid='CLSID:449E4080-7C69-4767-A1AE-6AAE25B0B906',codebase="http://www.wacom.com/U/plugins/Windows/WacomIE.cab#Version=-1,-1,-1,-1")
 
-embed(name="wacom-plugin",id="wacom-plugin",type="application/x-wacom-tablet",hidden="TRUE",pluginspage="http://www.wacom.com/productsupport/plugin.php")
+div(id = "area-embed")
+  embed(name="wacom-plugin",id="wacom-plugin",type="application/x-wacom-tablet",hidden="TRUE",pluginspage="http://www.wacom.com/productsupport/plugin.php")
 
 canvas.paint(id='p1', width='640', height='270')
 canvas.mouse(id='p2', width='640', height='270')
@@ -21,8 +22,8 @@ div#tools
     label(for='brush2') 消しゴム
     input(id='brush3',type='radio',name="bg",value="spuit")
     label(for='brush3') スポイト
-    input(id='brush3',type='radio',name="bg",value="gnh")
-    label(for='brush3') 我那覇響
+    input(id='brush4',type='radio',name="bg",value="gnh")
+    label(for='brush4') 我那覇響
   
   //
     form(id='bs')
