@@ -367,11 +367,14 @@ function getPressure() {
     //筆圧取得
     var plugin = getWacomPlugin();
     var pressure=1.0;
-    if(! typeof plugin === "undefined") pressure = plugin.pressure;
-    
+    //if(! typeof plugin === "undefined") pressure = plugin.pressure;
+    if(plugin.pointerType==1) pressure = plugin.pressure;
     console.log('plugin:'+plugin);
     console.log('pluginisWacom:'+plugin.isWacom);
     console.log('plugin.pressure:'+plugin.pressure);
+    console.log('pressure:'+pressure);
+    console.log('TabletModel:'+plugin.TabletModel);
+    console.log('pointertype:'+plugin.pointerType);
     console.log('type of plugin:'+ typeof plugin);
     
     return pressure;
