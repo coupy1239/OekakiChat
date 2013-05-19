@@ -1,90 +1,64 @@
-document.addEventListener('DOMContentLoaded', function(){
+jQuery(document).ready(function(){
   
   jQuery.noConflict()
-  var browser = navigator.userAgent;
+  
+  ////いろんなもの読み込む////
+  
+  var browser = navigator.userAgent;//ブラウザ
   console.log(browser);
-  var imgarr = [];
-  imgarr = {'gnh':new Image()};
-  imgarr['gnh'].src = '/img/hibiki.png';
-  //console.log(imgarr['gnh']);
   
-  var randomID = Math.random();
-  
-  var paint = new io.connect('/paint');
-  //受信
+  var paint = new io.connect('/paint');//ソケット
   paint.on('paint points', function(data) {
     if(data[0].rid != randomID) {
         for(var i in data) painting(data[i]);
     }
   });
   
-  var bufpts = new Array();
-
-  var canvas = document.getElementById('p1');
-  var context = canvas.getContext('2d');
+  var imgarr = [];//スタンプ画像
+  imgarr = {'gnh':new Image()};
+  imgarr['gnh'].src = '/img/hibiki.png';
   
-  /*ここに白背景描画を書く*/
+  var randomID = Math.random();//クライアントID
+  
+  var canvas = document.getElementById('p1');//描画キャンバス
+  var context = canvas.getContext('2d');
   context.fillStyle = "white";
   context.fillRect(0,0,canvas.width,canvas.height);
-  
-  var mousecanvas = document.getElementById('p2');
-  var ctxm = mousecanvas.getContext('2d');
-    
-  var brushsize = 4;
-
   context.lineWidth = 4;
   context.lineCap = 'round';
   context.fillStyle = 'black';
   context.strokeStyle = 'black';
   
+  var mousecanvas = document.getElementById('p2');//カーソル用キャンバス
+  var ctxm = mousecanvas.getContext('2d');
+  
+  var cs = document.getElementById('cs'); //色選択
+  
+  var bs= document.getElementById('brushgroup');//ブラシ選択
+  bs.addEventListener('change',function(event){
+      brushstyle = jQuery("#brushgroup input[name='bg']:checked").val();
+  });
+  
+  ////////////
+  
+  ////変数////
+  
+  var bufpts = new Array();  
+  var brushsize = 4;  
   var mycolor = 'black';
-
+  var brushstyle = 'pen';
   var positioning = null;
   var drawing = false;
   var selecting = false;
   var buffering = false;
   var clearing = false;
   var mouseout = false;
-  var brushstyle = 'pen';
   
-  var cs = document.getElementById('cs'); 
-  //var bs = document.getElementById('select');
+  ////////////
   
-  var bs= document.getElementById('brushgroup');
-  bs.addEventListener('change',function(event){
-      brushstyle = jQuery("#brushgroup input[name='bg']:checked").val();
-  });
+    
+  ////マウスイベント////
   
-  
-  var mousepointer = function(event){
-        event.preventDefault();
-        var positions = position(event);    
-        if (brushstyle == 'pen') {
-            ctxm.fillStyle = cs.style.backgroundColor;
-            ctxm.clearRect(0, 0, mousecanvas.width, mousecanvas.height);
-            ctxm.beginPath();
-            ctxm.arc(positions.x, positions.y, brushsize / 2, 0, Math.PI * 2, true);
-            ctxm.fill();
-        }
-        else if (brushstyle == 'eraser'){
-            ctxm.strokeStyle = 'black';
-            ctxm.fillStyle = 'white';
-            ctxm.clearRect(0, 0, mousecanvas.width, mousecanvas.height);
-            ctxm.beginPath();
-            ctxm.arc(positions.x, positions.y, brushsize / 2, 0, Math.PI * 2, true);
-            ctxm.stroke();
-            ctxm.fill();
-        }
-        else if (brushstyle == 'gnh'){
-            ctxm.clearRect(0, 0, mousecanvas.width, mousecanvas.height);
-            ctxm.drawImage(imgarr['gnh'],positions.x-imgarr['gnh'].width*brushsize/4/2/2,positions.y-imgarr['gnh'].height*brushsize/4/2/2,imgarr['gnh'].width*brushsize/4/2,imgarr['gnh'].height*brushsize/4/2);
-        }
-        else if (brushstyle == 'spuit'){
-            
-        }
-  };
-  
-  //mouse
   mousecanvas.addEventListener('mousedown', function(event) {
     drawing = true;
     if(brushstyle=='pen') drawArc(event,cs.style.backgroundColor);
@@ -118,11 +92,8 @@ document.addEventListener('DOMContentLoaded', function(){
   }, false);
 
   mousecanvas.addEventListener('mousemove', function(event) {
-    console.log('mousemove');
-    console.log(browser.indexOf("IE"));
-    console.log(mouseout);
     if(browser.indexOf("IE") == -1||!mouseout){
-      mousepointer(event);
+      drawcursor(event);
       if (drawing == true) {
         if(brushstyle=='pen') drawLine(event,cs.style.backgroundColor);
         if(brushstyle=='eraser') drawLine(event,'white');
@@ -131,7 +102,6 @@ document.addEventListener('DOMContentLoaded', function(){
   }, false);
 
   mousecanvas.addEventListener('mouseup', function(event) {
-      console.log('mouseup');
     if (drawing == true) {
       if(brushstyle=='pen') drawLine(event,cs.style.backgroundColor);
       if(brushstyle=='eraser') drawLine(event,'white');
@@ -140,7 +110,6 @@ document.addEventListener('DOMContentLoaded', function(){
   }, false);
     
   mousecanvas.addEventListener('mouseout', function(event) {
-      console.log('mouseout');
       mouseout=true;
     if (drawing == true) {
       positioning = position(event);
@@ -152,7 +121,6 @@ document.addEventListener('DOMContentLoaded', function(){
   }, false);
   
   mousecanvas.addEventListener('mouseover', function(event) {
-      console.log('mouseover');
       mouseout = false;
     if (drawing == true) {
         if(browser.indexOf("Chrome") != -1){
@@ -169,9 +137,13 @@ document.addEventListener('DOMContentLoaded', function(){
     ctxm.clearRect(0, 0, mousecanvas.width, mousecanvas.height);
   }, false);
   
-  //画像表示
-  var save = document.getElementById('save');
-  save.addEventListener('click', function() {
+  ////////////////
+  
+  
+  //画像保存
+  //var save = document.getElementById('save');
+  //save.addEventListener('click', function() {
+  jQuery('#save').click(function(){
     var date = new Date();
       var points = {
           s: 'save'
@@ -183,11 +155,12 @@ document.addEventListener('DOMContentLoaded', function(){
       buffer(points);
     var url = canvas.toDataURL();
     window.open(url,'data url');
-  }, false);
+  });
   
   //クリア
-  var clear = document.getElementById('clear');
-  clear.addEventListener('click', function() {
+  //var clear = document.getElementById('clear');
+  //clear.addEventListener('click', function() {
+  jQuery('#clear').click(function(){
     if(!clearing){
       var date = new Date();
       var points = {
@@ -201,31 +174,55 @@ document.addEventListener('DOMContentLoaded', function(){
       buffer(points);
       painting(points);
     }
-  }, false);
+  });
   
   //ログ表示
-  var log = document.getElementById('log');
-  log.addEventListener('click',function(){
+  //var log = document.getElementById('log');
+  //log.addEventListener('click',function(){
+  jQuery('#log').click(function(){
       window.open('/log/page1',null);
-  },false);
+  });
   
   //ブラシサイズ選択
-  /*  
-  var brushslider = document.getElementById('brushsize');
-  brushslider.addEventListener('change',function(event){
-      brushsize = brushslider.value;
-  });
-  */
   jQuery('#brushsize').slider({
-      value:4,
+      value:8,
       min:1,
-      max:30,
+      max:40,
       change:function(event,ui){
-          console.log("kawatteruyo!");
-          brushsize = ui.value;
+          brushsize = ui.value/2;
       }
   });
-
+  
+  ////描画関数////
+  
+  var drawcursor = function(event){
+        event.preventDefault();
+        var positions = position(event);    
+        if (brushstyle == 'pen') {
+            ctxm.fillStyle = cs.style.backgroundColor;
+            ctxm.clearRect(0, 0, mousecanvas.width, mousecanvas.height);
+            ctxm.beginPath();
+            ctxm.arc(positions.x, positions.y, brushsize / 2, 0, Math.PI * 2, true);
+            ctxm.fill();
+        }
+        else if (brushstyle == 'eraser'){
+            ctxm.strokeStyle = 'black';
+            ctxm.fillStyle = 'white';
+            ctxm.clearRect(0, 0, mousecanvas.width, mousecanvas.height);
+            ctxm.beginPath();
+            ctxm.arc(positions.x, positions.y, brushsize / 2, 0, Math.PI * 2, true);
+            ctxm.stroke();
+            ctxm.fill();
+        }
+        else if (brushstyle == 'gnh'){
+            ctxm.clearRect(0, 0, mousecanvas.width, mousecanvas.height);
+            ctxm.drawImage(imgarr['gnh'],positions.x-imgarr['gnh'].width*(0.5+brushsize/10)/2,positions.y-imgarr['gnh'].height*(0.5+brushsize/10)/2,imgarr['gnh'].width*(0.5+brushsize/10),imgarr['gnh'].height*(0.5+brushsize/10));
+        }
+        else if (brushstyle == 'spuit'){
+            
+        }
+  };
+  
   function drawArc(event,color) {
     event.preventDefault();
     positioning = position(event);
@@ -239,7 +236,6 @@ document.addEventListener('DOMContentLoaded', function(){
       , id: canvas.id
       , rid: randomID
     }
-    //paint.json.emit('paint points', points);
     buffer(points);
     painting(points);
   }
@@ -259,7 +255,6 @@ document.addEventListener('DOMContentLoaded', function(){
       , id: canvas.id
       , rid: randomID
     }
-    //paint.json.emit('paint points', points);
     buffer(points)
     painting(points);
     positioning = points;
@@ -294,7 +289,7 @@ document.addEventListener('DOMContentLoaded', function(){
         context.moveTo(points.x, points.y);
         break;
       case 'stamp':
-        context.drawImage(imgarr[points.img],points.x-imgarr['gnh'].width*points.w/4/2/2,points.y-imgarr['gnh'].height*points.w/4/2/2,imgarr['gnh'].width*points.w/4/2,imgarr['gnh'].height*points.w/4/2);
+        context.drawImage(imgarr[points.img],points.x-imgarr['gnh'].width*(0.5+points.w/10)/2,points.y-imgarr['gnh'].height*(0.5+points.w/10)/2,imgarr['gnh'].width*(0.5+points.w/10),imgarr['gnh'].height*(0.5+points.w/10));
         break;
       case 'clear':
         clearing = true;
@@ -305,6 +300,8 @@ document.addEventListener('DOMContentLoaded', function(){
       }
     }
   }
+  
+  ////送信系////
   
   function buffer(points){
       bufpts.push(points);
@@ -324,7 +321,7 @@ document.addEventListener('DOMContentLoaded', function(){
   
 }, false);
 
-function position(event) {
+function position(event) {//マウスの座標なおす
   var rect = event.target.getBoundingClientRect();
   return {
       x: event.clientX - rect.left
@@ -332,7 +329,7 @@ function position(event) {
   }
 }
 
-var toDoubleDigits = function(num) {
+var toDoubleDigits = function(num) {//2ケタにする
   num += "";
   if (num.length === 1) {
     num = "0" + num;
@@ -340,14 +337,14 @@ var toDoubleDigits = function(num) {
  return num;     
 };
 
-var toDoubleDigits16 = function(string) {
+var toDoubleDigits16 = function(string) {//16進2ケタ
     if(string.length==1){
         string = "0" + string;
     }
     return string;
 }
 
-var yyyymmddhhmiss = function() {
+var yyyymmddhhmiss = function() {//日付取得整形
   var date = new Date();
   var yyyy = date.getFullYear();
   var mm = toDoubleDigits(date.getMonth() + 1);
@@ -371,12 +368,11 @@ function getPressure() {
     var plugin = getWacomPlugin();
     var pressure=1.0;
     if(! typeof plugin === "undefined") pressure = plugin.pressure;
-    /*
+    
     console.log('plugin:'+plugin);
     console.log('pluginisWacom:'+plugin.isWacom);
     console.log('plugin.pressure:'+plugin.pressure);
     console.log('type of plugin:'+ typeof plugin);
-    console.log('pressure:'+pressure);
-    */
+    
     return pressure;
 }
