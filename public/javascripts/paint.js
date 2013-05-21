@@ -226,12 +226,12 @@ jQuery(document).ready(function(){
   function drawArc(event,color) {
     event.preventDefault();
     positioning = position(event);
-    var pressure = getPressure();    
+    //var pressure = getPressure();    
     var points = {
         s: 'arc'
       , x: positioning.x
       , y: positioning.y
-      , w: brushsize*pressure
+      , w: brushsize　/*pressure*/
       , c: color
       , id: canvas.id
       , rid: randomID
@@ -242,7 +242,7 @@ jQuery(document).ready(function(){
 
   function drawLine(event,color) {
     event.preventDefault();    
-    var pressure = getPressure();    
+    //var pressure = getPressure();    
     var positions = position(event);
     var points = {
         s: 'line'
@@ -250,7 +250,7 @@ jQuery(document).ready(function(){
       , y: positions.y
       , xp: positioning.x
       , yp: positioning.y
-      , w:  brushsize*pressure
+      , w:  brushsize /*pressure*/
       , c: color
       , id: canvas.id
       , rid: randomID
@@ -355,6 +355,8 @@ var yyyymmddhhmiss = function() {//日付取得整形
   return yyyy + '-' + mm + '-' + dd + ' ' + hh + '.' + mi + '.' + ss;
 };
 
+//筆圧
+/*
 function getWacomPlugin() {
 return window.Wacom || document.embeds["wacom-plugin"];
 }
@@ -379,3 +381,4 @@ function getPressure() {
     
     return pressure;
 }
+*/
