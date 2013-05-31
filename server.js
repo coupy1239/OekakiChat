@@ -210,6 +210,7 @@ var toDoubleDigits = function(num) {
 
 var yyyymmddhhmiss = function() {
   var date = new Date();
+  date.setTime(date.getTime()+9*60*60*1000);
   var yyyy = date.getFullYear();
   var mm = toDoubleDigits(date.getMonth() + 1);
   var dd = toDoubleDigits(date.getDate());
