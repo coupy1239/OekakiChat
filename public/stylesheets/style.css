@@ -10,14 +10,14 @@ a {
 
 .paint {
   position: absolute;
-  top: 40px; left: 0px;
+  top: 30px; left: 0px;
   border: 0px solid #888888;
   z-index: 0;
 }
 
 .mouse {
   position: absolute;
-  top: 40px; left: 0px;
+  top: 30px; left: 0px;
   border: 0px solid #888888;
   z-index: 1;
 }
