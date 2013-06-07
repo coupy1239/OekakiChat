@@ -7,19 +7,25 @@ html, body {
 a {
   color: #00B7FF;
 }
-
-.paint {
+.stamp {
   position: absolute;
   top: 30px; left: 0px;
   border: 0px solid #888888;
   z-index: 0;
 }
 
-.mouse {
+.paint {
   position: absolute;
   top: 30px; left: 0px;
   border: 0px solid #888888;
   z-index: 1;
+}
+
+.mouse {
+  position: absolute;
+  top: 30px; left: 0px;
+  border: 0px solid #888888;
+  z-index: 2;
 }
 
 #tools {
