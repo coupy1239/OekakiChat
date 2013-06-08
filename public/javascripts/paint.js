@@ -24,7 +24,7 @@ jQuery(document).ready(function(){
   
   var canvas = document.getElementById('p1');//描画キャンバス
   var context = canvas.getContext('2d');
-  context.fillStyle = 'rgba(255,255,255,255)';
+  context.fillStyle = 'white';
   context.fillRect(0,0,canvas.width,canvas.height);
   context.lineWidth = 4;
   context.lineCap = 'round';
@@ -84,6 +84,8 @@ jQuery(document).ready(function(){
         var rgb = new Array();
         for(var i=0;i<3;i++) rgb[i]=toDoubleDigits16(imgdata.data[i].toString(16));
         cs.value = "#"+rgb[0]+rgb[1]+rgb[2];
+        if((imgdata.data[0]+imgdata.data[1]+imgdata.data[2])/3<128) cs.style.color = "#FFFFFF";
+        else cs.style.color = "#000000";
     }
   }, false);
 
@@ -135,11 +137,13 @@ jQuery(document).ready(function(){
   }, false);
   
   document.addEventListener('keydown',function(event){
+    if(!shiftdown) drawcursor(event);
     shiftdown = event.shiftKey;
   }, false);
   
   document.addEventListener('keyup',function(event){
     shiftdown = event.shiftKey;
+    drawcursor(event);
   }, false);
   ////////////////
   
@@ -210,11 +214,11 @@ jQuery(document).ready(function(){
             //直線表示
             if(shiftdown && positioning){
                 ctxm.lineWidth = brushsize;
+                ctxm.lineCap = 'round';
                 ctxm.strokeStyle = cs.style.backgroundColor;      
                 ctxm.beginPath();
                 ctxm.moveTo(positions.x, positions.y);   
                 ctxm.lineTo(positioning.x, positioning.y);
-                ctxm.closePath();
                 ctxm.stroke();
             }
         }
@@ -229,11 +233,11 @@ jQuery(document).ready(function(){
             //直線表示
             if(shiftdown && positioning){
                 ctxm.lineWidth = brushsize;
+                ctxm.lineCap = 'round';
                 ctxm.strokeStyle = 'white';      
                 ctxm.beginPath();
                 ctxm.moveTo(positions.x, positions.y);   
                 ctxm.lineTo(positioning.x, positioning.y);
-                ctxm.closePath();
                 ctxm.stroke();
             }
         }                
@@ -328,26 +332,21 @@ jQuery(document).ready(function(){
 
   function painting(points) {
     clearing = false;
-    if (canvas.id == points.id) {
-      context.lineWidth = points.w;
+    if (canvas.id == points.id) {      
       switch (points.s) {
       case 'line':
+        context.lineWidth = points.w;
+        context.lineCap = "round";
         context.strokeStyle = points.c;               
         context.beginPath();
         context.moveTo(points.x, points.y);   
         context.lineTo(points.xp, points.yp);
-        context.closePath();
-        context.stroke();
-        context.fillStyle = points.c; 
-        context.arc(points.x, points.y, context.lineWidth/2, 0, Math.PI*2, true);
-        context.fill();
-        context.arc(points.xp, points.yp, context.lineWidth/2, 0, Math.PI*2, true);
-        context.fill();
+        context.stroke();        
         break;
       case 'arc':
         context.fillStyle = points.c;
         context.beginPath();
-        context.arc(points.x, points.y, context.lineWidth/2, 0, Math.PI*2, true);
+        context.arc(points.x, points.y, Math.floor(points.w/2), 0, Math.PI*2, true);
         context.fill();
         break;
       case 'stamp':
@@ -381,7 +380,7 @@ jQuery(document).ready(function(){
         break;
       case 'clear':
         clearing = true;
-        context.fillStyle = "rgba(255,255,255,255)";
+        context.fillStyle = "white";
         context.fillRect(0,0,canvas.width,canvas.height);
         break;
 
