@@ -8,16 +8,16 @@ jQuery(document).ready(function(){
   
   var paint = new io.connect('/paint');//ソケット
   paint.on('paint points', function(data) {
-    if(data[0].rid != randomID) {
+    //if(data[0].rid != randomID) {
         for(var i in data) painting(data[i]);
-    }
+    //}
   });
   
   var imgarr = [];//スタンプ画像
   imgarr = {'gnh':new Image()};
   imgarr['gnh'].src = '/img/hibiki.png';
   
-  var randomID = Math.random();//クライアントID
+  //var randomID = Math.random();//クライアントID
   
   var stampcanvas = document.getElementById('p0');//スタンプ用キャンバス
   var ctxs = stampcanvas.getContext('2d');
@@ -155,8 +155,8 @@ jQuery(document).ready(function(){
     var date = new Date();
       var points = {
           s: 'save'
-        , id: canvas.id
-        , rid: randomID
+        //, id: canvas.id
+        //, rid: randomID
         , url: canvas.toDataURL()
         , time: yyyymmddhhmiss()
       };
@@ -174,7 +174,7 @@ jQuery(document).ready(function(){
       var points = {
           s: 'clear'
         , id: canvas.id
-        , rid: randomID
+        //, rid: randomID
         , url: canvas.toDataURL()
         , time: yyyymmddhhmiss()
       };
@@ -187,7 +187,7 @@ jQuery(document).ready(function(){
   //var log = document.getElementById('log');
   //log.addEventListener('click',function(){
   jQuery('#log').click(function(){
-      window.open('/log/page1',null);
+      window.open('/log/page1.html',null);
   });
   
   //ブラシサイズ選択
@@ -196,7 +196,8 @@ jQuery(document).ready(function(){
       min:1,
       max:40,
       change:function(event,ui){
-          brushsize = ui.value/2;
+          brushsize = Math.floor(ui.value/2);
+          console.log(brushsize);
       }
   });
   
@@ -286,8 +287,8 @@ jQuery(document).ready(function(){
       , y: positioning.y
       , w: brushsize　/*pressure*/
       , c: color
-      , id: canvas.id
-      , rid: randomID
+      //, id: canvas.id
+      //, rid: randomID
     }
     buffer(points);
     painting(points);
@@ -305,11 +306,19 @@ jQuery(document).ready(function(){
       , yp: positioning.y
       , w:  brushsize /*pressure*/
       , c: color
-      , id: canvas.id
-      , rid: randomID
+      //, id: canvas.id
+      //, rid: randomID
     }
     buffer(points)
-    painting(points);
+    painting({
+        s: points.s
+      , x: [points.xp ,points.x]
+      , y: [points.yp ,points.y]
+      , w:  points.w
+      , c: points.c
+      //, id: points.id
+      //, rid: points.rid
+    });
     positioning = positions;
   }
   
@@ -322,8 +331,8 @@ jQuery(document).ready(function(){
       , y: positioning.y
       , w: brushsize
       , c: color
-      , id: canvas.id
-      , rid: randomID
+      //, id: canvas.id
+      //, rid: randomID
       , img: img
         }
         buffer(points);
@@ -332,15 +341,16 @@ jQuery(document).ready(function(){
 
   function painting(points) {
     clearing = false;
-    if (canvas.id == points.id) {      
+    //if (canvas.id == points.id) {      
       switch (points.s) {
       case 'line':
         context.lineWidth = points.w;
         context.lineCap = "round";
         context.strokeStyle = points.c;               
         context.beginPath();
-        context.moveTo(points.x, points.y);   
-        context.lineTo(points.xp, points.yp);
+        var kisuu_hosei = 0.5*points.w%2;//奇数なら座標0.5マイナス
+        context.moveTo(points.x[0]-kisuu_hosei, points.y[0]-kisuu_hosei);
+        for(var i=1;i<points.x.length;i++) context.lineTo(points.x[i]-kisuu_hosei, points.y[i]-kisuu_hosei);
         context.stroke();        
         break;
       case 'arc':
@@ -385,14 +395,39 @@ jQuery(document).ready(function(){
         break;
 
       }
-    }
+    //}
   }
   
   ////送信系////
   
   function buffer(points){
-      bufpts.push(points);
+      //まとめる              
+        if (points.s == 'line') {
+            var linepoints = {
+                    s : points.s,
+                    x : [points.xp, points.x],
+                    y : [points.yp, points.y],
+                    w : points.w,
+                    c : points.c,
+                    //id : points.id,
+                    //rid : points.rid
+            };
+            
+            if (bufpts.length > 0) {
+                if (bufpts.slice(-1)[0].s == points.s && bufpts.slice(-1)[0].c == points.c && bufpts.slice(-1)[0].w == points.w && bufpts.slice(-1)[0].s == 'line') {
+                    bufpts[bufpts.length-1].x.push(points.x);
+                    bufpts[bufpts.length-1].y.push(points.y);
+                }else{
+                    bufpts.push(linepoints);
+                }
+            } else {
+                bufpts.push(linepoints);
+            }
+        }else{
+            bufpts.push(points);
+      }
       
+      //クリアセーブは即送信・他は0.5秒ごとに送信
       if(points.s == 'clear'||points.s == 'save'){
           buffering = true;
           emitting();
@@ -414,8 +449,8 @@ jQuery(document).ready(function(){
 function position(event) {//マウスの座標なおす
   var rect = event.target.getBoundingClientRect();
   return {
-      x: event.clientX - rect.left
-    , y: event.clientY - rect.top
+      x: Math.floor(event.clientX - rect.left)
+    , y: Math.floor(event.clientY - rect.top)
   }
 }
 

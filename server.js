@@ -44,7 +44,7 @@ app.get('/log',function(req,res){
 });
 */
 
-app.get('/log/page:id',function(req,res){
+app.get('/log/page:id.html',function(req,res){
     res.render('log/page'+req.params.id,{
         title: 'Image log'
     });
@@ -77,8 +77,9 @@ paint = io.of('/paint').on('connection', function (socket) {
   socket.on('paint points', function(data) {
     ////受信
     for(var i in data) points.push(data[i]);
-    paint.emit('paint points', data);//全クライアントに送信
-
+    //paint.emit('paint points', data);//全クライアントに送信
+    socket.broadcast.emit('paint points',data);
+    
     //clearsave時
     if(data[data.length-1].s == 'clear'||data[data.length-1].s == 'save'){
         //画像保存
@@ -125,7 +126,7 @@ paint = io.of('/paint').on('connection', function (socket) {
                     if(j==i10){
                         fs.appendFileSync(path+i10 +'.jade','  li\n    '+j+'\n');
                     }else{
-                        fs.appendFileSync(path+i10 +'.jade','  li\n    a(href = \"page' + j + '\") '+j+'\n');
+                        fs.appendFileSync(path+i10 +'.jade','  li\n    a(href = \"page' + j + '.html\") '+j+'\n');
                     }
                     fs.closeSync(fd);
                 }
