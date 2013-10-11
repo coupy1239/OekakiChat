@@ -193,7 +193,7 @@ jQuery(document).ready(function(){
   //ブラシサイズ選択
   jQuery('#brushsize').slider({
       value:8,
-      min:1,
+      min:2,
       max:40,
       change:function(event,ui){
           brushsize = Math.floor(ui.value/2);
