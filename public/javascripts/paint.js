@@ -9,7 +9,7 @@ jQuery(document).ready(function(){
   var paint = new io.connect('/paint');//ソケット
   paint.on('paint points', function(data) {
     //if(data[0].rid != randomID) {
-        for(var i in data) setInterval(painting(data[i]),1000);
+        for(var i in data) painting(data[i]);
     //}
   });
   
