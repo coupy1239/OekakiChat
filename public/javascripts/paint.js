@@ -9,7 +9,7 @@ jQuery(document).ready(function(){
   var paint = new io.connect('/paint');//ソケット
   paint.on('paint points', function(data) {
     //if(data[0].rid != randomID) {
-        for(var i in data) painting(data[i]);
+        for(var i in data) setInterval(painting(data[i]),1000);
     //}
   });
   
@@ -33,6 +33,7 @@ jQuery(document).ready(function(){
   
   var mousecanvas = document.getElementById('p2');//カーソル用キャンバス
   var ctxm = mousecanvas.getContext('2d');
+  ctxm.lineCap ='round';
   
   var cs = document.getElementById('cs'); //色選択
   
@@ -197,7 +198,6 @@ jQuery(document).ready(function(){
       max:40,
       change:function(event,ui){
           brushsize = Math.floor(ui.value/2);
-          console.log(brushsize);
       }
   });
   
@@ -215,7 +215,7 @@ jQuery(document).ready(function(){
             //直線表示
             if(shiftdown && positioning){
                 ctxm.lineWidth = brushsize;
-                ctxm.lineCap = 'round';
+                //ctxm.lineCap = 'round';
                 ctxm.strokeStyle = cs.style.backgroundColor;      
                 ctxm.beginPath();
                 ctxm.moveTo(positions.x, positions.y);   
@@ -234,7 +234,7 @@ jQuery(document).ready(function(){
             //直線表示
             if(shiftdown && positioning){
                 ctxm.lineWidth = brushsize;
-                ctxm.lineCap = 'round';
+                //ctxm.lineCap = 'round';
                 ctxm.strokeStyle = 'white';      
                 ctxm.beginPath();
                 ctxm.moveTo(positions.x, positions.y);   
@@ -345,13 +345,21 @@ jQuery(document).ready(function(){
       switch (points.s) {
       case 'line':
         context.lineWidth = points.w;
-        context.lineCap = "round";
-        context.strokeStyle = points.c;               
-        context.beginPath();
+        context.strokeStyle = points.c;
         var kisuu_hosei = 0.5*points.w%2;//奇数なら座標0.5マイナス
+        /*          
+        context.beginPath();        
         context.moveTo(points.x[0]-kisuu_hosei, points.y[0]-kisuu_hosei);
         for(var i=1;i<points.x.length;i++) context.lineTo(points.x[i]-kisuu_hosei, points.y[i]-kisuu_hosei);
-        context.stroke();        
+        context.stroke();
+        */
+        
+        for(var i=1;i<points.x.length;i++){
+            context.beginPath();
+            context.moveTo(points.x[i-1]-kisuu_hosei, points.y[i-1]-kisuu_hosei);
+            context.lineTo(points.x[i]-kisuu_hosei, points.y[i]-kisuu_hosei);
+            context.stroke();
+        }
         break;
       case 'arc':
         context.fillStyle = points.c;
