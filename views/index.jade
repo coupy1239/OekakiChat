@@ -1,6 +1,7 @@
 canvas.stamp(id='p0', width='640', height='270')
 canvas.paint(id='p1', width='640', height='270')
 canvas.mouse(id='p2', width='640', height='270')
+canvas.chara(id='p3', width='640', height='270')
 
 div#tools
   button#clear clear
@@ -21,6 +22,9 @@ div#tools
     input(id='brush4',type='radio',name="bg",value="gnh")
     label(for='brush4') 我那覇響
   
+  div(id='charaswitch')
+    input(id='switch1',type='checkbox',value='ON')
+    label(for='switch1') プレイヤー
   //
     form(id='bs')
       select#mytextarea(id='select')

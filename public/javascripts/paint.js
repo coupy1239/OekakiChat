@@ -8,21 +8,17 @@ jQuery(document).ready(function(){
   
   var paint = new io.connect('/paint');//ソケット
   paint.on('paint points', function(data) {
-    //if(data[0].rid != randomID) {
         for(var i in data) painting(data[i]);
-    //}
   });
   
   var imgarr = [];//スタンプ画像
   imgarr = {'gnh':new Image()};
   imgarr['gnh'].src = '/img/hibiki.png';
   
-  //var randomID = Math.random();//クライアントID
-  
-  var stampcanvas = document.getElementById('p0');//スタンプ用キャンバス
+  var stampcanvas = jQuery('#p0')[0];//スタンプ用キャンバス
   var ctxs = stampcanvas.getContext('2d');
   
-  var canvas = document.getElementById('p1');//描画キャンバス
+  var canvas = jQuery('#p1')[0];//描画キャンバス
   var context = canvas.getContext('2d');
   context.fillStyle = 'white';
   context.fillRect(0,0,canvas.width,canvas.height);
@@ -31,16 +27,16 @@ jQuery(document).ready(function(){
   context.fillStyle = 'black';
   context.strokeStyle = 'black';
   
-  var mousecanvas = document.getElementById('p2');//カーソル用キャンバス
+  var mousecanvas = jQuery('#p2')[0];//カーソル用キャンバス
   var ctxm = mousecanvas.getContext('2d');
   ctxm.lineCap ='round';
   
-  var cs = document.getElementById('cs'); //色選択
+  var cs = jQuery('#cs')[0]; //色選択
   
-  var bs= document.getElementById('brushgroup');//ブラシ選択
-  bs.addEventListener('change',function(event){
+  var bs= jQuery('#brushgroup')[0];//ブラシ選択
+  bs.onchange = function(event){
       brushstyle = jQuery("#brushgroup input[name='bg']:checked").val();
-  });
+  };
   
   ////////////
   
@@ -57,13 +53,15 @@ jQuery(document).ready(function(){
   var clearing = false;
   var mouseout = false;
   var shiftdown = false;
+  var focused = false;
   
   ////////////
   
     
   ////マウスイベント////
   
-  mousecanvas.addEventListener('mousedown', function(event) {
+  //mousecanvas.addEventListener('mousedown', function(event) {
+  mousecanvas.onmousedown = function(event){
     drawing = true;
     if(brushstyle=='pen'){
         if(shiftdown) drawLine(event,cs.style.backgroundColor);
@@ -88,9 +86,9 @@ jQuery(document).ready(function(){
         if((imgdata.data[0]+imgdata.data[1]+imgdata.data[2])/3<128) cs.style.color = "#FFFFFF";
         else cs.style.color = "#000000";
     }
-  }, false);
+  };
 
-  mousecanvas.addEventListener('mousemove', function(event) {
+  mousecanvas.onmousemove = function(event){
     if(browser.indexOf("IE") == -1||!mouseout){
       drawcursor(event);
       if (drawing == true) {
@@ -98,9 +96,9 @@ jQuery(document).ready(function(){
         if(brushstyle=='eraser') drawLine(event,'white');
       }
     }
-  }, false);
+  };
 
-  mousecanvas.addEventListener('mouseup', function(event) {
+  mousecanvas.onmouseup = function(event){
     if (drawing == true) {
       if(brushstyle=='pen') {
           drawLine(event,cs.style.backgroundColor);
@@ -108,9 +106,9 @@ jQuery(document).ready(function(){
       if(brushstyle=='eraser') drawLine(event,'white');
       drawing = false;
     }
-  }, false);
+  };
     
-  mousecanvas.addEventListener('mouseout', function(event) {
+  mousecanvas.onmouseout = function(event){
       mouseout=true;
     if (drawing == true) {
       positioning = position(event);
@@ -118,9 +116,9 @@ jQuery(document).ready(function(){
       if(brushstyle=='eraser') drawLine(event,'white');
     }
     ctxm.clearRect(0, 0, mousecanvas.width, mousecanvas.height);
-  }, false);
+  };
   
-  mousecanvas.addEventListener('mouseover', function(event) {
+  mousecanvas.onmouseover = function(event){
       mouseout = false;
     if (drawing == true) {
         if(browser.indexOf("Chrome") != -1){
@@ -135,17 +133,22 @@ jQuery(document).ready(function(){
         }
     }
     ctxm.clearRect(0, 0, mousecanvas.width, mousecanvas.height);
-  }, false);
+  };
   
-  document.addEventListener('keydown',function(event){
+  document.onkeydown = function(event){
     if(!shiftdown) drawcursor(event);
     shiftdown = event.shiftKey;
-  }, false);
+    
+    keydown(event.keyCode);
+  };
   
-  document.addEventListener('keyup',function(event){
+  document.onkeyup = function(event){
     shiftdown = event.shiftKey;
     drawcursor(event);
-  }, false);
+    
+    keyup(event.keyCode);
+  };
+
   ////////////////
   
   
@@ -451,6 +454,164 @@ jQuery(document).ready(function(){
           buffering = false;
       }
   }
+  
+  ////////////////////////////////////////////////////
+  /////////////////////////////chara///////////////
+  ////////////////////////////////////////////////////
+    var charaon = true;
+    /*jQuery('#switch1')[0].onchange = function(){
+        alert(jQuery('#switch1').prop('checked'));
+    };*/
+  
+    paint.on('chara move',function(data){//move受信
+      var exist = false;
+      if(charaarray.length>0){
+          for(var i=0;i<charaarray.length;i++){
+              if(charaarray[i].id == data.id){
+                  charaarray[i].x = data.x;
+                  charaarray[i].y = data.y;
+                  exist = true;
+                  break;
+              }          
+          }
+      }
+      if(!exist){//新規だった
+          newchara = new Charactor(data.id,data.x,data.y);
+          charaarray.push(newchara);
+          chara_emitting({id:mychara.id,x:mychara.x,y:mychara.y});
+      }
+    });
+    
+    paint.on('chara disconnect',function(data){//切断
+        for(var i=0;i<charaarray.length;i++){
+              if(charaarray[i].id == data.id){
+                  charaarray.splice(i,1);
+                  break;
+              }          
+        }
+    });
+    
+    
+    var mychara;
+    var charaarray = new Array();
+    var rightpressed=false;
+    var leftpressed=false;
+    var ground = 200;
+    var FPS = 10;
+    
+    var cv_chara = jQuery('#p3')[0];//キャラ描画キャンバス
+    var cx_chara = cv_chara.getContext('2d');
+    
+    function Charactor(id,x,y){
+        this.id = id;
+        this.x = x;
+        this.y = y;
+        this.x_prev = x;
+        this.y_prev = y;
+        this.vx = 0;
+        this.vy = 0;
+        this.gv = 4;
+        this.ar = 1.001;
+        
+        this.xspeed = 18;
+        this.yspeed = 30;
+        
+        this.jumping = false;
+        
+        this.jump = function(){
+          if(!this.jumping){
+              this.jumping = true;
+              this.vy  = -this.yspeed;
+          }  
+        };
+        
+        this.move = function(){
+            this.x_prev = this.x;
+            this.y_prev = this.y;
+            
+            //移動処理
+            //x
+            if(!this.jumping){
+                if(rightpressed) this.vx = this.xspeed;
+                else if(leftpressed) this.vx = -this.xspeed;
+                else this.vx = 0;
+            }else{
+                this.vx = parseInt(this.vx / this.ar);
+            }
+            this.x += this.vx;
+            //y
+            if(this.jumping){
+                this.vy += this.gv;
+                if(this.vy>this.yspeed/2) this.vy = this.yspeed/2;
+                this.y += this.vy;
+                if(this.y>ground){
+                    this.y = ground;
+                    this.jumping = false;
+                }
+            }
+            //移動したか
+            if(this.isMoving()) chara_emitting({id:this.id,x:this.x,y:this.y});
+        };
+        
+        this.draw = function(){
+            cx_chara.drawImage(imgarr['gnh'],this.x,this.y);
+        };
+        
+        this.isMoving = function(){
+            if(this.x != this.x_prev||this.y != this.y_prev) return true;
+            else return false;
+        };
+       
+    }
+    
+    //操作関数
+    function keyup(code){
+        switch(code){
+            case(37):leftpressed = false; break;//左
+            case(38):break;//上
+            case(39):rightpressed = false; break;//右
+            case(40):break;//下
+        }
+    }
+    
+    function keydown(code){
+        switch(code){
+            case(37):leftpressed = true; break;//左
+            case(38):break;//上
+            case(39):rightpressed =true; break;//右
+            case(40):break;//下
+            case(32):mychara.jump();break;//スペース
+        }
+    }
+    
+    function chara_emitting(moving){//送信
+        if(jQuery('#switch1').prop('checked')) paint.json.emit('chara move', moving);
+    }
+    
+    
+    //
+    var run = function(){
+        setInterval(function(){
+            cx_chara.clearRect(0, 0, cv_chara.width, cv_chara.height);//ちゃんと考えて
+            if(jQuery('#switch1').prop('checked')){
+                mychara.move();
+                mychara.draw();
+                if(charaarray.length>0){
+                    for(var i=0;i<charaarray.length;i++){
+                        charaarray[i].draw();
+                    }
+                }
+            }
+        },1000/FPS);
+    }
+    
+    //初期化
+    mychara = new Charactor(Math.random(),200,200);
+    chara_emitting({id:mychara.id,x:mychara.x,y:mychara.y});
+    run();
+  ////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////
   
 }, false);
 

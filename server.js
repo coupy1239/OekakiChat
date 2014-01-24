@@ -59,9 +59,12 @@ var points = [];
 var io = require('socket.io').listen(app);
 
 var clientsuu = 0;
+var clientlist = [];
 
 paint = io.of('/paint').on('connection', function (socket) {
   ////接続時
+  
+  
   //接続数記録
   clientsuu++;
   var date = yyyymmddhhmiss();
@@ -69,6 +72,7 @@ paint = io.of('/paint').on('connection', function (socket) {
   fd = fs.openSync(path,'a');
   fs.appendFileSync(path,date + ' ' + clientsuu + '\n');
   fs.closeSync(fd);
+  
   //全データ送信
   if (points.length > 0) {
       socket.json.emit('paint points', points);
@@ -192,12 +196,32 @@ paint = io.of('/paint').on('connection', function (socket) {
     }
   });
   
+  socket.on('chara move',function(data){
+      //新規ならクライアントリストに追加
+      var exist = false;
+      if(clientlist.length>0){
+          for(var i=0;i<clientlist.length;i++){
+              if(clietnlist[i] == socket.id) exist = true;
+          }
+      }
+      if(!exist)  clientlist[socket.id] = data.id;
+      //他のユーザーに送信
+      socket.broadcast.emit('chara move', data);
+  });
+  
   socket.on('disconnect',function(){
+      //他のユーザーに送信
+      socket.broadcast.emit('chara disconnect', {id : clientlist[socket.id]});
+      
+      //接続数ログ更新
       clientsuu = clientsuu-1;
       var date = yyyymmddhhmiss();
       var fd = __dirname + '/public/connection';
       fs.openSync(fd,'a');
       fs.appendFileSync(fd,date + ' ' + clientsuu + '\n');
+      
+      //クライアントリストから削除
+      delete clientlist[socket.id];
   });
 });
 

@@ -25,8 +25,16 @@ a {
   position: absolute;
   top: 30px; left: 0px;
   border: 0px solid #888888;
+  z-index: 3;
+}
+
+.chara {
+  position: absolute;
+  top: 30px; left: 0px;
+  border: 0px solid #888888;
   z-index: 2;
 }
+
 
 #tools {
   position: absolute;
@@ -124,7 +132,34 @@ a {
 	background: #ff7000;
 }
 
+#charaswitch {
+	margin-top:2px;
+}
 
+#charaswitch input {
+	display:none;
+}
+
+#charaswitch label{
+	font-size:10px;
+	cursor: pointer;
+	padding: 7px 10px;
+	float: left;
+	border: solid 1px #ff7000;
+	margin-left: 2px;
+	background: #fefefe;
+	border-radius:3px;
+	color:#666666;
+}
+
+#charaswitch :hover{
+	color:#f05000;
+}
+
+#charaswitch input:checked + label {
+    color: #fff;
+	background: #ff7000;
+}
 
 #thumb{
 	width:128px;
