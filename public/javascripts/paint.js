@@ -47,6 +47,7 @@ jQuery(document).ready(function(){
   var mycolor = '#000000';
   var brushstyle = 'pen';
   var positioning = null;
+  var positioned = null;
   var drawing = false;
   var selecting = false;
   var buffering = false;
@@ -90,6 +91,7 @@ jQuery(document).ready(function(){
 
   mousecanvas.onmousemove = function(event){
     if(browser.indexOf("IE") == -1||!mouseout){
+      positioned = position(event);
       drawcursor(event);
       if (drawing == true) {
         if(brushstyle=='pen') drawLine(event,cs.style.backgroundColor);
@@ -136,16 +138,14 @@ jQuery(document).ready(function(){
   };
   
   document.onkeydown = function(event){
-    if(!shiftdown) drawcursor(event);
+    if((!shiftdown)&&positioning) drawShiftLine();
     shiftdown = event.shiftKey;
-    
     keydown(event.keyCode);
   };
   
-  document.onkeyup = function(event){
-    shiftdown = event.shiftKey;
-    drawcursor(event);
-    
+  document.onkeyup = function(event){    
+    if(shiftdown&&positioning) drawShiftLine();
+    shiftdown = event.shiftKey;    
     keyup(event.keyCode);
   };
 
@@ -215,16 +215,10 @@ jQuery(document).ready(function(){
             ctxm.beginPath();
             ctxm.arc(positions.x, positions.y, brushsize / 2, 0, Math.PI * 2, true);
             ctxm.fill();
+            
             //直線表示
-            if(shiftdown && positioning){
-                ctxm.lineWidth = brushsize;
-                //ctxm.lineCap = 'round';
-                ctxm.strokeStyle = cs.style.backgroundColor;      
-                ctxm.beginPath();
-                ctxm.moveTo(positions.x, positions.y);   
-                ctxm.lineTo(positioning.x, positioning.y);
-                ctxm.stroke();
-            }
+            if(shiftdown) drawShiftLine();
+            
         }
         else if (brushstyle == 'eraser'){
             ctxm.lineWidth = 1;
@@ -234,16 +228,10 @@ jQuery(document).ready(function(){
             ctxm.arc(positions.x, positions.y, brushsize / 2, 0, Math.PI * 2, true);
             ctxm.stroke();
             ctxm.fill();
+            
             //直線表示
-            if(shiftdown && positioning){
-                ctxm.lineWidth = brushsize;
-                //ctxm.lineCap = 'round';
-                ctxm.strokeStyle = 'white';      
-                ctxm.beginPath();
-                ctxm.moveTo(positions.x, positions.y);   
-                ctxm.lineTo(positioning.x, positioning.y);
-                ctxm.stroke();
-            }
+            if(shiftdown) drawShiftLine();
+            
         }                
         else if (brushstyle == 'gnh') {
             //ctxm.drawImage(imgarr['gnh'],positions.x-imgarr['gnh'].width*(0.5+brushsize/10)/2,positions.y-imgarr['gnh'].height*(0.5+brushsize/10)/2,imgarr['gnh'].width*(0.5+brushsize/10),imgarr['gnh'].height*(0.5+brushsize/10));
@@ -279,6 +267,20 @@ jQuery(document).ready(function(){
             
         }
   };
+  
+  function drawShiftLine(){
+      if(positioning){
+          if (brushstyle == 'pen'||brushstyle == 'eraser'){
+            ctxm.lineWidth = brushsize;
+            if(brushstyle == 'pen') ctxm.strokeStyle = cs.style.backgroundColor;
+            else if(brushstyle == 'eraser') ctxm.strokeStyle = 'white';     
+            ctxm.beginPath();
+            ctxm.moveTo(positioned.x, positioned.y);   
+            ctxm.lineTo(positioning.x, positioning.y);
+            ctxm.stroke();
+          }
+      }
+  }
   
   function drawArc(event,color) {
     event.preventDefault();
@@ -575,6 +577,7 @@ jQuery(document).ready(function(){
     }
     
     function keydown(code){
+        console.log('keydown!');
         switch(code){
             case(37):leftpressed = true; break;//左
             case(38):break;//上
