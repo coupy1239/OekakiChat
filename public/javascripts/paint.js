@@ -158,13 +158,15 @@ jQuery(document).ready(function(){
   };
   
   document.onkeydown = function(event){
-    if((!shiftdown)&&positioning) drawShiftLine();
+    if(event.shiftKey){
+        if((!shiftdown)&&positioning) drawShiftLine();
+    }
     shiftdown = event.shiftKey;
     keydown(event.keyCode);
   };
   
-  document.onkeyup = function(event){    
-    if(shiftdown&&positioning) drawShiftLine();
+  document.onkeyup = function(event){
+    if(shiftdown&&positioning) ctxm.clearRect(0, 0, mousecanvas.width, mousecanvas.height);
     shiftdown = event.shiftKey;    
     keyup(event.keyCode);
   };
