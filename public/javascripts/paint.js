@@ -2,6 +2,24 @@ jQuery(document).ready(function(){
   
   jQuery.noConflict()
   
+    ////変数////
+  
+  var bufpts = new Array();  
+  var brushsize = 4;  
+  var mycolor = '#000000';
+  var brushstyle = 'pen';
+  var positioning = null;
+  var positioned = null;
+  var drawing = false;
+  var selecting = false;
+  var buffering = false;
+  var clearing = false;
+  var mouseout = false;
+  var shiftdown = false;
+  var focused = false;
+  
+  ////////////
+  
   ////いろんなもの読み込む////
   
   var browser = navigator.userAgent;//ブラウザ
@@ -32,6 +50,15 @@ jQuery(document).ready(function(){
   ctxm.lineCap ='round';
   
   var cs = jQuery('#cs')[0]; //色選択
+  jQuery('#cs').ColorPicker({
+        color:'#000000', 
+        onChange: function (hsb, hex, rgb) {
+            jQuery('#cs').css('backgroundColor', '#' + hex);
+            jQuery('#cs').val('#' + hex);
+            if(hsb.b<80) jQuery('#cs').css('color','#ffffff');
+            else jQuery('#cs').css('color','#000000');                    
+        }
+  });
   
   var bs= jQuery('#brushgroup')[0];//ブラシ選択
   bs.onchange = function(event){
@@ -40,23 +67,7 @@ jQuery(document).ready(function(){
   
   ////////////
   
-  ////変数////
-  
-  var bufpts = new Array();  
-  var brushsize = 4;  
-  var mycolor = '#000000';
-  var brushstyle = 'pen';
-  var positioning = null;
-  var positioned = null;
-  var drawing = false;
-  var selecting = false;
-  var buffering = false;
-  var clearing = false;
-  var mouseout = false;
-  var shiftdown = false;
-  var focused = false;
-  
-  ////////////
+
   
     
   ////マウスイベント////
@@ -80,12 +91,21 @@ jQuery(document).ready(function(){
         event.preventDefault();
         positioning = position(event);
         imgdata = context.getImageData(positioning.x,positioning.y,1,1);
+        /*
         cs.style.backgroundColor = "rgb("+imgdata.data[0].toString()+','+imgdata.data[1].toString()+','+imgdata.data[2].toString()+')';
         var rgb = new Array();
         for(var i=0;i<3;i++) rgb[i]=toDoubleDigits16(imgdata.data[i].toString(16));
         cs.value = "#"+rgb[0]+rgb[1]+rgb[2];
         if((imgdata.data[0]+imgdata.data[1]+imgdata.data[2])/3<128) cs.style.color = "#FFFFFF";
         else cs.style.color = "#000000";
+        */
+        var hex ='';
+        for(var i=0;i<3;i++) hex += toDoubleDigits16(imgdata.data[i].toString(16));
+        jQuery('#cs').ColorPickerSetColor('#' + hex);
+        jQuery('#cs').css('backgroundColor', '#' + hex);
+        jQuery('#cs').val('#' + hex);
+        if(jQuery('.colorpicker_hsb_b').children('input')[0].value<80) jQuery('#cs').css('color','#ffffff');
+        else jQuery('#cs').css('color','#000000');   
     }
   };
 
