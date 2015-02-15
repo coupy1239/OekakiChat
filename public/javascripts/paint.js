@@ -74,6 +74,8 @@ jQuery(document).ready(function(){
   
   //mousecanvas.addEventListener('mousedown', function(event) {
   mousecanvas.onmousedown = function(event){
+    event.stopPropagation();
+
     drawing = true;
     if(brushstyle=='pen'){
         if(shiftdown) drawLine(event,cs.style.backgroundColor);
@@ -88,7 +90,6 @@ jQuery(document).ready(function(){
     } 
     if(brushstyle=='spuit'){
         var imgdata = context.createImageData(1,1);
-        event.preventDefault();
         positioning = position(event);
         imgdata = context.getImageData(positioning.x,positioning.y,1,1);
         /*
@@ -110,6 +111,8 @@ jQuery(document).ready(function(){
   };
 
   mousecanvas.onmousemove = function(event){
+    event.stopPropagation();
+
     if(browser.indexOf("IE") == -1||!mouseout){
       positioned = position(event);
       drawcursor(event);
@@ -121,6 +124,8 @@ jQuery(document).ready(function(){
   };
 
   mousecanvas.onmouseup = function(event){
+    event.stopPropagation();
+
     if (drawing == true) {
       if(brushstyle=='pen') {
           drawLine(event,cs.style.backgroundColor);
@@ -131,7 +136,9 @@ jQuery(document).ready(function(){
   };
     
   mousecanvas.onmouseout = function(event){
-      mouseout=true;
+    event.stopPropagation();
+
+    mouseout=true;
     if (drawing == true) {
       positioning = position(event);
       if(brushstyle=='pen') drawLine(event,cs.style.backgroundColor);
@@ -141,7 +148,9 @@ jQuery(document).ready(function(){
   };
   
   mousecanvas.onmouseover = function(event){
-      mouseout = false;
+    event.stopPropagation();
+
+    mouseout = false;
     if (drawing == true) {
         if(browser.indexOf("Chrome") != -1){
             if(Event.isLeftClick(event)){
@@ -163,12 +172,14 @@ jQuery(document).ready(function(){
     }
     shiftdown = event.shiftKey;
     keydown(event.keyCode);
+    return false;
   };
   
   document.onkeyup = function(event){
     if(shiftdown&&positioning) ctxm.clearRect(0, 0, mousecanvas.width, mousecanvas.height);
     shiftdown = event.shiftKey;    
     keyup(event.keyCode);
+    return false;
   };
 
   ////////////////
@@ -229,7 +240,6 @@ jQuery(document).ready(function(){
   ////描画関数////
   
   var drawcursor = function(event){
-        event.preventDefault();
         var positions = position(event);
         ctxm.clearRect(0, 0, mousecanvas.width, mousecanvas.height); 
         if (brushstyle == 'pen') {
@@ -305,7 +315,6 @@ jQuery(document).ready(function(){
   }
   
   function drawArc(event,color) {
-    event.preventDefault();
     positioning = position(event);
     //var pressure = getPressure();    
     var points = {
@@ -322,7 +331,6 @@ jQuery(document).ready(function(){
   }
 
   function drawLine(event,color) {
-    event.preventDefault();    
     //var pressure = getPressure();    
     var positions = position(event);
     var points = {
@@ -350,7 +358,6 @@ jQuery(document).ready(function(){
   }
   
   function drawStamp(event,img,color){
-        event.preventDefault();
         positioning = position(event);
         var points = {
         s: 'stamp'
