@@ -380,7 +380,7 @@ jQuery(document).ready(function(){
       case 'line':
         context.lineWidth = points.w;
         context.strokeStyle = points.c;
-        var kisuu_hosei = 0.5*points.w%2;//奇数なら座標0.5マイナス
+        var kisuu_hosei = points.w % 2 === 0 ? 0 : 0.5; //奇数なら座標0.5マイナス
         /*          
         context.beginPath();        
         context.moveTo(points.x[0]-kisuu_hosei, points.y[0]-kisuu_hosei);
