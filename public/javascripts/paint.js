@@ -229,11 +229,11 @@ jQuery(document).ready(function(){
   
   //ブラシサイズ選択
   jQuery('#brushsize').slider({
-      value:8,
-      min:2,
-      max:40,
+      value:4,
+      min:1,
+      max:20,
       change:function(event,ui){
-          brushsize = Math.floor(ui.value/2);
+          brushsize = ui.value;
       }
   });
   
