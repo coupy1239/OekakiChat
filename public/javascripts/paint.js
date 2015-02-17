@@ -226,7 +226,7 @@ jQuery(document).ready(function(){
       value:4,
       min:1,
       max:20,
-      change:function(event,ui){
+      slide:function(event,ui){
           brushsize = ui.value;
       }
   });
