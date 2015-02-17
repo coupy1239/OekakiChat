@@ -392,7 +392,7 @@ jQuery(document).ready(function(){
       case 'arc':
         context.fillStyle = points.c;
         context.beginPath();
-        context.arc(points.x, points.y, Math.floor(points.w/2), 0, Math.PI*2, true);
+        context.arc(points.x, points.y, points.w / 2, 0, Math.PI * 2, true);
         context.fill();
         break;
       case 'stamp':
