@@ -126,13 +126,7 @@ jQuery(document).ready(function(){
   mousecanvas.onmouseup = function(event){
     event.stopPropagation();
 
-    if (drawing == true) {
-      if(brushstyle=='pen') {
-          drawLine(event,cs.style.backgroundColor);
-      }
-      if(brushstyle=='eraser') drawLine(event,'white');
-      drawing = false;
-    }
+    drawing = false;
   };
     
   mousecanvas.onmouseout = function(event){
