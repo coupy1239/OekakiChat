@@ -74,6 +74,8 @@ jQuery(document).ready(function(){
   
   //mousecanvas.addEventListener('mousedown', function(event) {
   mousecanvas.onmousedown = function(event){
+    event.stopPropagation();
+
     drawing = true;
     if(brushstyle=='pen'){
         if(shiftdown) drawLine(event,cs.style.backgroundColor);
@@ -88,7 +90,6 @@ jQuery(document).ready(function(){
     } 
     if(brushstyle=='spuit'){
         var imgdata = context.createImageData(1,1);
-        event.preventDefault();
         positioning = position(event);
         imgdata = context.getImageData(positioning.x,positioning.y,1,1);
         /*
@@ -110,6 +111,8 @@ jQuery(document).ready(function(){
   };
 
   mousecanvas.onmousemove = function(event){
+    event.stopPropagation();
+
     if(browser.indexOf("IE") == -1||!mouseout){
       positioned = position(event);
       drawcursor(event);
@@ -121,17 +124,15 @@ jQuery(document).ready(function(){
   };
 
   mousecanvas.onmouseup = function(event){
-    if (drawing == true) {
-      if(brushstyle=='pen') {
-          drawLine(event,cs.style.backgroundColor);
-      }
-      if(brushstyle=='eraser') drawLine(event,'white');
-      drawing = false;
-    }
+    event.stopPropagation();
+
+    drawing = false;
   };
     
   mousecanvas.onmouseout = function(event){
-      mouseout=true;
+    event.stopPropagation();
+
+    mouseout=true;
     if (drawing == true) {
       positioning = position(event);
       if(brushstyle=='pen') drawLine(event,cs.style.backgroundColor);
@@ -141,7 +142,9 @@ jQuery(document).ready(function(){
   };
   
   mousecanvas.onmouseover = function(event){
-      mouseout = false;
+    event.stopPropagation();
+
+    mouseout = false;
     if (drawing == true) {
         if(browser.indexOf("Chrome") != -1){
             if(Event.isLeftClick(event)){
@@ -163,12 +166,14 @@ jQuery(document).ready(function(){
     }
     shiftdown = event.shiftKey;
     keydown(event.keyCode);
+    return false;
   };
   
   document.onkeyup = function(event){
     if(shiftdown&&positioning) ctxm.clearRect(0, 0, mousecanvas.width, mousecanvas.height);
     shiftdown = event.shiftKey;    
     keyup(event.keyCode);
+    return false;
   };
 
   ////////////////
@@ -218,18 +223,17 @@ jQuery(document).ready(function(){
   
   //ブラシサイズ選択
   jQuery('#brushsize').slider({
-      value:8,
-      min:2,
-      max:40,
-      change:function(event,ui){
-          brushsize = Math.floor(ui.value/2);
+      value:4,
+      min:1,
+      max:20,
+      slide:function(event,ui){
+          brushsize = ui.value;
       }
   });
   
   ////描画関数////
   
   var drawcursor = function(event){
-        event.preventDefault();
         var positions = position(event);
         ctxm.clearRect(0, 0, mousecanvas.width, mousecanvas.height); 
         if (brushstyle == 'pen') {
@@ -305,7 +309,6 @@ jQuery(document).ready(function(){
   }
   
   function drawArc(event,color) {
-    event.preventDefault();
     positioning = position(event);
     //var pressure = getPressure();    
     var points = {
@@ -322,7 +325,6 @@ jQuery(document).ready(function(){
   }
 
   function drawLine(event,color) {
-    event.preventDefault();    
     //var pressure = getPressure();    
     var positions = position(event);
     var points = {
@@ -350,7 +352,6 @@ jQuery(document).ready(function(){
   }
   
   function drawStamp(event,img,color){
-        event.preventDefault();
         positioning = position(event);
         var points = {
         s: 'stamp'
@@ -373,7 +374,7 @@ jQuery(document).ready(function(){
       case 'line':
         context.lineWidth = points.w;
         context.strokeStyle = points.c;
-        var kisuu_hosei = 0.5*points.w%2;//奇数なら座標0.5マイナス
+        var kisuu_hosei = points.w % 2 === 0 ? 0 : 0.5; //奇数なら座標0.5マイナス
         /*          
         context.beginPath();        
         context.moveTo(points.x[0]-kisuu_hosei, points.y[0]-kisuu_hosei);
@@ -391,7 +392,7 @@ jQuery(document).ready(function(){
       case 'arc':
         context.fillStyle = points.c;
         context.beginPath();
-        context.arc(points.x, points.y, Math.floor(points.w/2), 0, Math.PI*2, true);
+        context.arc(points.x, points.y, points.w / 2, 0, Math.PI * 2, true);
         context.fill();
         break;
       case 'stamp':
