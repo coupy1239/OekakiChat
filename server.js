@@ -1,4 +1,3 @@
-﻿
 /**
  * Module dependencies.
  */
@@ -186,13 +185,6 @@ paint = io.of('/paint').on('connection', function (socket) {
             
         }
         */
-    }else{
-        if(global.gc) {
-            global.gc();
-            console.log('gc!!\n');
-        }else{
-            console.log('cannot gc!!\n');
-        }
     }
   });
   
