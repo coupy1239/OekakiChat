@@ -6,8 +6,8 @@
       "start":"node --expose_gc server.js"
   }
   , "dependencies": {
-      "express": "~2.5"
-    , "jade": "~0.22.1"
-    , "socket.io": ">= 0.8"
+      "express": ">=0.0.1"
+    , "jade": ">=0.0.1"
+    , "socket.io": ">= 0.0.1"
   }
 }
