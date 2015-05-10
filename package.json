@@ -1,13 +1,13 @@
 {
-    "name": "おえかきちゃっと"
-  , "version": "0.0.1"
-  , "private": true
-  , "script": {
-      "start":"node --expose_gc server.js"
-  }
-  , "dependencies": {
-      "express": ">=0.0.1"
-    , "jade": ">=0.0.1"
-    , "socket.io": ">= 0.0.1"
+  "name": "おえかきちゃっと",
+  "version": "0.0.1",
+  "private": true,
+  "script": {
+    "start": "node --expose_gc server.js"
+  },
+  "dependencies": {
+    "express": "*",
+    "jade": "*",
+    "socket.io": "*"
   }
 }
