@@ -1,6 +1,9 @@
 {
   "name": "おえかきちゃっと",
   "version": "0.0.1",
+  "engines": {
+    "node": "0.10.x"
+  },
   "private": true,
   "script": {
     "start": "node --expose_gc server.js"
